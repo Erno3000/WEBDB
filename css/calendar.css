@@ -1,0 +1,149 @@
+#calendar {
+    border-spacing:0;
+}
+
+#calendar td {
+    width:90px;
+}
+
+#calendar td {
+    border:1px solid #81a4cc;
+    padding:2px;
+}
+
+#calendar caption {
+    background-color:#294ccc;
+    color:#fff;
+    padding:5px;
+}
+
+#calendar caption #month {
+    font-weight:bold;
+    display: inline-block;
+    *display: inline;/* for IE7*/
+    *zoom:1;/* for IE7*/
+    min-width: 80px;
+}
+
+#calendar caption #year {
+    font-weight:bold;
+}
+
+#calendar #weekdays {
+    background-color:#dde5ec;
+    text-align:center;
+}
+
+#calendar .days {
+    background-color:#a3b1f1;
+}
+
+#calendar .events {
+    height:80px;
+    border:1px solid #81a4cc;
+}
+
+#calendar .events td .event {
+    background-color: #f4f4f4;
+    font-size:90%;
+    padding:2px 0;
+    text-align:center;
+}
+
+#calendar .events td .event:hover {
+    background-color: #abcca3;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+
+#calendar .events td .even {
+    background-color: #e7e7e7;
+}
+
+
+#calendar .days .selected {
+    background-color:#3272bb;
+    color:#fff;
+}
+
+#calendar .events .selected {
+    background-color:#e1e1e1;
+}
+
+.other_month {
+    color: #5a5a5a;
+}
+
+#calsearch {
+    margin-left:10px;
+    float:left;
+    background-color:#EDEDED;
+    margin-right:10px;
+    border-right:1px solid #dedede;
+    border-left:1px solid #dedede;
+    border-top:1px solid #dedede;
+}
+
+#calsearch_footer {
+    border-top:1px solid #b9b9b9;
+    border-bottom:1px solid #b9b9b9;
+    padding:10px;
+    text-align:center;
+    color:#5a5a5a;
+    background-color: #f8f8f8;
+}
+
+.calsearch_footer_active {
+    font-weight:bold;
+    text-decoration:underline;
+}
+
+.search_result {
+    background-color:#fff;
+    min-height:35px;
+    padding:10px;
+    border-bottom:1px solid #ccc;
+    border-top:1px solid #ccc;
+    margin-bottom:5px;
+    color: #7b7b7b;
+    margin:15px 15px 4px 15px;
+}
+
+.search_result:hover {
+    background-color: #fcfcfc;
+    cursor:pointer;
+}
+
+.search_result h2 {
+    color: #2c2c2c;
+    margin-bottom:2px;
+    font-size:110%;
+}
+
+#search {
+    margin-bottom:20px;
+    padding:20px 20px 0 20px;
+}
+
+#txt_search {
+    background: url(../img/search.png) top left no-repeat;
+    height:16px;
+    padding: 4px 10px 5px 30px;
+    border:none;
+    width:280px;
+    outline: none;
+    margin-bottom:8px;
+}
+
+#calview_opt {
+    background-color: #687fea;
+    padding-bottom:2px;
+    margin-bottom:5px;
+}
+
+#search_year {
+    float:right;
+    position:relative;
+    top:-20px;
+}
