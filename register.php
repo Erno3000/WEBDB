@@ -1,15 +1,21 @@
 <?php
 
+$title = 'Register';
+
+
+//TODO
+//geen cijfers in namen
+
     include('header.php');
     include('config.php');
 
+    $formError = false;
+
     //Alleen uitvoeren wanneer het een post request is, dus alleen wanneer het formulier wordt gesubmit
     if ($_POST) {
+        $post = true;
         //Maak een mysqli object aan met de gegevens uit config.php
         $mysqli = new mysqli($dbHost, $dbUser, $dbPass, $dbName);
-
-        //Query om te checken of de username al bestaat
-        $queryUsername = "SELECT * FROM Users WHERE username = ?";
 
         //Query om een user te registreren, gegevens worden ingevuld door variabelen te "binden", dwz invullen
         // op de plaats waar een ? staat
@@ -23,12 +29,8 @@
             //Wanneer first name is ingevuld, even de lengte checken
             if(isset($_POST['fname'])) {
                 $fname = $_POST['fname'];
-                requireLength($fname, 1, 30, "First name");
-            } else {
-                $fname = "";
-            }
-
-
+                requireLength($fname, 1, 30, $fnameError);
+            } 
 
             //Plaats de geposte data (gelinked aan id's uit het form) in variabelen
             $lname = $_POST['lname'];
@@ -38,153 +40,120 @@
             $pass2 = $_POST['pass2'];
 
             if(isset($_POST['preposition'])) {
-                requireLength($_POST['preposition'], 1, 30, "Preposition");
-                $lname .= ',' . $_POST['preposition'];
+                $preposition = $_POST['preposition'];
+                requireLength($preposition, 1, 30, $prepError);
             }
 
-            //TODO MAX LEN! 20 max voor pass
-            //geen cijfers in namen
-            //tussenvoegsel met , bij achternaam
-            //
-
             //Check de lengte van de geposte data
-            requireLength($lname, 1, 60,  "Last name");
-            requireLength($username, 6, 20, "Username");
-            requireLength($pass1, 6, 20, "Password");
-            requireLength($pass2, 6, 20, "Password");
+            requireLength($lname, 1, 60,  $lnameError);
+            requireLength($username, 6, 20, $usernameError);
+            requireLength($pass1, 6, 20, $pass1Error);
+            requireLength($pass2, 6, 20, $pass2Error);
 
             if($pass1 != $pass2) {
-                error("Password should be equal to check password!");
+                $pass2Error = "Does not match!";
             }
 
             //Check of de email valid is
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                error("Invalid email!");
+                $emailError = "Invalid email!";
             }
 
-
-            //Assign de gepreparede query (voor username check) aan de var stmt
-            if($stmt = $mysqli->prepare($queryUsername)) {
-                //Bind de geposte data aan het ? in de query
-                $stmt->bind_param('s', "'$username'");
+            if(!$formError && $stmt = $mysqli->prepare($queryRegister)) {
+                $lnameprep = $lname . ',' . $preposition;
+                $stmt->bind_param('sssss', $fname, $lnameprep, $username, $pass1, $email);
 
                 if(!$stmt->execute()) {
-                    echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$queryUsername;
-                } else  {
-                    //Als er 0 rows matchen is de username niet in gebruik
-                    $count = $stmt->num_rows;
-                    echo "num rows: $count";
-                    if($count > 0) {
-                        $stmt->close();
-                        error("Username is already used!");
-                    }
-
+                    error($usernameError, "Username in use!");
+                } else {
+                    echo 'Registered.';
                 }
 
                 $stmt->close();
             } else {
                 echo 'Er zit een fout in de query: '.$mysqli->error;
             }
-
-            if($stmt = $mysqli->prepare($queryRegister))
-            {
-                //TODO remove ofc
-                echo "$fname, $lname, $preposition, $username, $pass1, $email";
-
-                $stmt->bind_param('sssss', $fname, $lname, $username, $pass1, $email);
-
-                if(!$stmt->execute()) {
-                    echo 'Het uitvoeren van de query is mislukt: '.$stmt->error.' in query: '.$queryRegister;
-                }
-
-                $stmt->close();
-            } else {
-                echo 'Er zit een fout in de query: '.$mysqli->error;
-            }
-
-            echo 'Registered.';
 
         }
 
-
-
-
-
     }
-
-
-
-
 
     if(mysqli_connect_errno()) {
         trigger_error('Fout bij verbinding: '.$mysqli->error);
     }
 
-    function error($msg) {
-        echo $msg;
-        exit;
+    function error(&$errorVar, $msg) {
+        global $formError;
+        $formError = true;
+        $errorVar = $msg;
     }
 
-    function requireLength($field, $minLen, $maxLen, $msg) {
+    function requireLength($field, $minLen, $maxLen, &$error) {
         if(strlen($field) < $minLen || strlen($field) > $maxLen) {
-            echo $msg . " does not meet the length requirements: minimum $minLen and maximum $maxLen characters";
-            exit;
+            $error = "$minLen - $maxLen characters";
         }
     }
 
+    function createField(&$prevVal, &$error, $id, $label, $mandatory, $type = 'text') {
+        print '<li><label for="' . $id . '">' . $label . ':';
+        if($mandatory) {
+            print '*';
+        }
+        print '</label>';
 
+        print '<input type="' . $type . '" id="' . $id . '" name="' . $id . '" size="25"';
 
+        if(isset($prevVal) && $type == 'text') {
+            print ' value="' . strip_tags($prevVal) . '"';
+        }
+
+        if(isset($error)) {
+            print ' class="errorinput"';
+        }
+        print " />";
+        if(isset($error)) {
+            print '<span class="errormsg">' . $error . '</span>';
+        }
+        print '</li>';
+    }
 
 
 ?>
 
-<div id="content">
-    <h1>Create a new account</h1>
-        <div id="caform">            
-            <form action="register.php" method="post">
-                <fieldset>
-                    <legend>Fill in this form to create a new account.</legend>                
-                <ul>
-                    <li>
-                        <label for="fname">First name:</label>
-                        <input type="text" id="fname" name="fname" size="25" />
-                    </li>
-                    <li>
-                        <label for="preposition">Preposition</label>
-                        <input type="text" id="preposition" name="preposition" size="25" />
-                    </li>
-                    <li>
-                        <label for="lname">Last name:*</label>
-                        <input type="text" id="lname" name="lname" size="25" />
-                    </li>
-                    <li>
-                        <label for="username">Username:*</label>
-                        <input type="text" id="username" name="username" size="25" />
-                    </li>
-                    <li>
-                        <label for="email">Email adress:*</label>
-                        <input type="text" id="email" name="email" size="25" />
-                    </li>
-                    <li>
-                        <label for="pass1">Password:*</label>
-                        <input type="password" id="pass1" name="pass1" size="25" />
-                    </li>
-                    <li>
-                        <label for="pass2">Retype password:*</label>
-                        <input type="password" id="pass2" name="pass2" size="25" />
-                    </li>
-                    <li>
-                        <label for="submit">&nbsp;</label>
-                        <input type="submit" id="submit" name="submit" value="Submit" />
-                    </li>
-                </ul>
-                <p class="rule"><br /><br />Fields with an * are mandatory.</p>
-                </fieldset>
-            </form>
-        </div>
-</div>
-
 <?php
+    if(!isset($post) || (isset($post) && $formError)) {
+        echo '<div id="content">
+                <h1>Create a new account</h1>
+                    <div id="caform">
+                        <form action="register.php" method="post">
+                            <fieldset>
+                                <legend>Fill in this form to create a new account.</legend>
+                                    <ul>';
+
+        createField($fname, $fnameError, 'fname', 'First Name', false);
+        createField($preposition, $prepError, 'preposition', 'Preposition', false);
+        createField($lname, $lnameError, 'lname', 'Last Name', true);
+        createField($username, $usernameError, 'username', 'Username', true);
+        createField($email, $emailError, 'email', 'Email address', true);
+        createField($pass1, $pass1Error, 'pass1', 'Password', true, 'password');
+        createField($pass2, $pass2Error, 'pass2', 'Retype Password', true, 'password');
+
+        echo '<li>
+                <label for="submit">&nbsp;</label>
+                    <input type="submit" id="submit" name="submit" value="Submit" />
+              </li>
+           </ul>
+           <p class="rule"><br /><br />Fields with an * are mandatory.</p>
+        </fieldset>
+    </form>
+  </div>
+</div>';
+
+
+
+
+
+    }
 
     include('footer.php');
 
