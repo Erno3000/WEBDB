@@ -22,20 +22,40 @@
         <ul>
             <li><a href="index.php">Home</a></li>
             <li class="sep"><a href="agenda.php">Agenda</a></li>
-            <li class="sep"><a href="create_item.php">Create event</a></li>
-            <li class="sep"><a href="approve_item.php">Approve event</a></li>
+			<?php
+			if($_SESSION['loggedin']==false)
+				{
+				<li class="sep"><a href="create_item.php">Create event</a></li>
+				<li class="sep"><a href="approve_item.php">Approve event</a></li>
+				}
+			?>
         </ul>
     </div>
 
     <div id="login">
-        <form>
-            <input type="text" class="css3text" name="username" id="username" placeholder="username" />
-            <input type="password" class="css3text" name="password" id="password" placeholder="password" />
-            <input type="button" class="css3button" value="Login" />
-            <p>
-                <span class="register">You can register <a href="register.php">here</a>.</span>
-            </p>
-        </form>
+		<?php
+		/*
+		alvast een klein beginnetje. kan natuurlijk anders, maar ik ging uit van een session variable loggedin.
+		was vergeten dat dit niet mijn taak was. maar ik had session ID nodig dus tja....
+		*/
+		if($_SESSION['loggedin'])
+			{
+			<form>
+				<input type="button" class="css3button" value="Logout" id="Logout" />
+			</form>
+			}
+		else
+			{
+			<form>
+				<input type="text" class="css3text" name="username" id="username" placeholder="username" />
+				<input type="password" class="css3text" name="password" id="password" placeholder="password" />
+				<input type="button" class="css3button" value="Login" />
+				<p>
+					<span class="register">You can register <a href="register.php">here</a>.</span>
+				</p>
+			</form>
+			}
+		?>
     </div>
 
 </div>
