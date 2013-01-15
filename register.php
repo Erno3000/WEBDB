@@ -2,10 +2,6 @@
 
 $title = 'Register';
 
-
-//TODO
-//geen cijfers in namen
-
     include('header.php');
     include('config.php');
 
@@ -29,7 +25,7 @@ $title = 'Register';
             //Wanneer first name is ingevuld, even de lengte checken
             if(isset($_POST['fname'])) {
                 $fname = $_POST['fname'];
-                requireLength($fname, 1, 30, $fnameError);
+                requireLength($fname, 0, 30, $fnameError);
             } 
 
             //Plaats de geposte data (gelinked aan id's uit het form) in variabelen
@@ -41,7 +37,7 @@ $title = 'Register';
 
             if(isset($_POST['preposition'])) {
                 $preposition = $_POST['preposition'];
-                requireLength($preposition, 1, 30, $prepError);
+                requireLength($preposition, 0, 30, $prepError);
             }
 
             //Check de lengte van de geposte data
@@ -50,30 +46,35 @@ $title = 'Register';
             requireLength($pass1, 6, 20, $pass1Error);
             requireLength($pass2, 6, 20, $pass2Error);
 
+            requireNoNumbers($fname, $fnameError);
+            requireNoNumbers($preposition, $prepError);
+            requireNoNumbers($lname, $lnameError);
+
             if($pass1 != $pass2) {
-                $pass2Error = "Does not match!";
+                error($pass2Error, "Does not match!");
             }
 
             //Check of de email valid is
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $emailError = "Invalid email!";
+                error($emailError, "Invalid email!");
             }
 
-            if(!$formError && $stmt = $mysqli->prepare($queryRegister)) {
-                $lnameprep = $lname . ',' . $preposition;
-                $stmt->bind_param('sssss', $fname, $lnameprep, $username, $pass1, $email);
+            if(!$formError) {
+                if($stmt = $mysqli->prepare($queryRegister)) {
+                    $lnameprep = $lname . ',' . $preposition;
+                    $stmt->bind_param('sssss', $fname, $lnameprep, $username, $pass1, $email);
 
-                if(!$stmt->execute()) {
-                    error($usernameError, "Username in use!");
+                    if(!$stmt->execute()) {
+                        error($usernameError, "Username in use!");
+                    } else {
+                        echo 'Registered.';
+                    }
+
+                    $stmt->close();
                 } else {
-                    echo 'Registered.';
+                    echo 'Er zit een fout in de query: '.$mysqli->error;
                 }
-
-                $stmt->close();
-            } else {
-                echo 'Er zit een fout in de query: '.$mysqli->error;
             }
-
         }
 
     }
@@ -90,9 +91,16 @@ $title = 'Register';
 
     function requireLength($field, $minLen, $maxLen, &$error) {
         if(strlen($field) < $minLen || strlen($field) > $maxLen) {
-            $error = "$minLen - $maxLen characters";
+            error($error, "$minLen - $maxLen characters");
         }
     }
+
+    function requireNoNumbers($str, &$error) {
+        if(preg_match('#\d#', $str)) {
+            $error = "No digits allowed";
+        }
+    }
+
 
     function createField(&$prevVal, &$error, $id, $label, $mandatory, $type = 'text') {
         print '<li><label for="' . $id . '">' . $label . ':';
