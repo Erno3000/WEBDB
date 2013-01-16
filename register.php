@@ -1,5 +1,8 @@
 <?php
 
+//TODO
+// - Encrypt password.
+
 $title = 'Register';
 
     include('header.php');
@@ -24,19 +27,19 @@ $title = 'Register';
 
             //Wanneer first name is ingevuld, even de lengte checken
             if(isset($_POST['fname'])) {
-                $fname = $_POST['fname'];
+                $fname = strip_tags($_POST['fname']);
                 requireLength($fname, 0, 30, $fnameError);
             } 
 
             //Plaats de geposte data (gelinked aan id's uit het form) in variabelen
-            $lname = $_POST['lname'];
-            $username = $_POST['username'];
-            $email = $_POST['email'];
-            $pass1 = $_POST['pass1'];
-            $pass2 = $_POST['pass2'];
+            $lname = strip_tags($_POST['lname']);
+            $username = strip_tags($_POST['username']);
+            $email = strip_tags($_POST['email']);
+            $pass1 = strip_tags($_POST['pass1']);
+            $pass2 = strip_tags($_POST['pass2']);
 
             if(isset($_POST['preposition'])) {
-                $preposition = $_POST['preposition'];
+                $preposition = strip_tags($_POST['preposition']);
                 requireLength($preposition, 0, 30, $prepError);
             }
 
@@ -112,7 +115,7 @@ $title = 'Register';
         print '<input type="' . $type . '" id="' . $id . '" name="' . $id . '" size="25"';
 
         if(isset($prevVal) && $type == 'text') {
-            print ' value="' . strip_tags($prevVal) . '"';
+            print ' value="' . $prevVal . '"';
         }
 
         if(isset($error)) {
