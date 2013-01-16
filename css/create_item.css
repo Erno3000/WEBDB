@@ -1,6 +1,6 @@
 #ccform ul {
     list-style: none;
-    padding: 0px 0px;
+    padding: 2px 5px;
 }
 
 #ccform li {
@@ -11,8 +11,13 @@
     margin-left: 9em;
 }
 
-p.rule {
+p.mandatory {
     font-size: 80%;
+    padding-left: 5px;
+}
+
+p.maximum {
+	margin-left: 9em;
 }
 
 #ccform label {

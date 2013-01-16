@@ -115,7 +115,7 @@ $title = 'Register';
         print '<input type="' . $type . '" id="' . $id . '" name="' . $id . '" size="25"';
 
         if(isset($prevVal) && $type == 'text') {
-            print ' value="' . $prevVal . '"';
+            print ' value="' . strip_tags($prevVal) . '"';
         }
 
         if(isset($error)) {

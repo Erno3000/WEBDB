@@ -43,9 +43,11 @@ h1 {
 }
 
 .errorinput {
-    background-color: #e8183a;
+    color: #A00;
+    background-color: #FDD;
 }
 
 .errormsg {
     margin-left:5px;
+    color: #940000;
 }
