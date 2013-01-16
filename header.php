@@ -1,6 +1,4 @@
 <?php
-	//Uncomment when JS implementation works:
-	//session_set_cookie_params(0);
 	session_start();
 ?>
 
@@ -35,6 +33,7 @@
                       
             <div class="login">
                 <?php
+                	/* If the user is not logged in, show the login pane, etc. */
                 	if(!isset($_SESSION['loggedin'])) {
                     	echo '                
 		                    <div class="loginpane">
@@ -55,14 +54,16 @@
 		                        </ul>
 		                    </div> ';
        				} else {
+       					/* Else show the other variant of the login pane. */
        					echo '<div class="loginpane">';
        					if (isset($_SESSION['username'])) {
        						echo "Welcome, " . $_SESSION['username'] . "!</div>";
 		   					echo '<div class="loginbar2">'. 
 		   						'<ul>
-		   							<li><a href="logout.php">Logout</a></li>
+		   							<li><a href="myevents.php">My events</a></li>
 		   							<li><a href="accountsettings.html">
 		   								Account settings</a></li>
+		   							<li><a href="logout.php">Logout</a></li>
 		   						</ul>';
 		   				}
        					echo '</div>';
@@ -80,7 +81,7 @@
                 <?php
                     if (isset($_SESSION['loggedin'])) {
                     	if ($_SESSION['rank'] >= 1) {
-		                    echo '<li class="sep"><a href="create_item.php">
+		                    echo '<li class="sep"><a href="create_item.html">
 		                    	Create event</a></li>';
 		               	}
 		               	
