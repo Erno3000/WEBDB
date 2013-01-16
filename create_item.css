@@ -1,0 +1,35 @@
+#ccform ul {
+    list-style: none;
+    padding: 0px 0px;
+}
+
+#ccform li {
+    padding: 2px 0px;
+}
+
+#target, #startdate, #enddate {
+    margin-left: 9em;
+}
+
+p.mandatory {
+    font-size: 80%;
+}
+
+p.maximum {
+	margin-left: 9em;
+}
+
+#ccform label {
+    font-weight: bold;
+    font-size: 105%;
+    width: 8em;
+    float: left;
+    text-align: left;
+    margin-right: 0.5em;
+    display: block;
+}
+
+fieldset {
+    width: 32em;
+    height: 26em;
+}
