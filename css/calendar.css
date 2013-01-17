@@ -20,8 +20,6 @@
 #calendar caption #month {
     font-weight:bold;
     display: inline-block;
-    *display: inline;/* for IE7*/
-    *zoom:1;/* for IE7*/
     min-width: 80px;
 }
 
