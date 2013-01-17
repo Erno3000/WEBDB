@@ -89,7 +89,12 @@
 		                    echo '<li class="sep"><a href="approve_item.php">
 		                    	Approve event</a></li>';
 		                }
-		     		}
+		                
+		                if ($_SESSION['rank'] >= 3) {
+		                    echo '<li class="sep"><a href="approve_user.php">
+		                    	Approve users</a></li>';
+		                }
+		     	}
                 ?>
             </ul>
         </div>

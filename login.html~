@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Login</title>
+        <link rel="stylesheet" type="text/css" href="login_style.css" />
+    </head>
+
+    <body>
+    	<div id="login">
+			<h2>Login</h2>
+			
+			<form action="login.php" method="post">
+				<label for="username">Username:</label>
+					<input type="text" name="username"><br />
+				<label for="password">Password:</label>
+					<input type="password" name="pwd"><br />
+				<input type="submit" value="Login">
+			</form>
+			<p> If you don't have an account yet, you can register
+				<a href="register.html">here</a>. <br />
+				If you have forgotten your password, then
+				<a href="forgotpw.html">click here</a>.
+			</p>
+		</div>
+    </body>
+</html>
+
+
