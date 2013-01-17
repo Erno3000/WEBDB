@@ -14,7 +14,8 @@ if (!$result = $mysqli->query("SELECT event_id, user_id, subject, start_date, pl
 
 
 <div id="content">
-<!--A list of all events that need approval (flag=0 in table events.).-->
+
+    <!--A list of all events that need approval (flag=0 in table events.).-->
     <div id="eventlist">
         <form action="">
             <select name="events">
