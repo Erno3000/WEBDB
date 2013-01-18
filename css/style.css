@@ -154,12 +154,12 @@ body {
 
 #footer {
 	background-color: #3f3f3f;
-	
+	position: relative;
 	/*formaat*/
 	height: 56px;
 	width: 100%;
 	min-width: 800px;
-    clear:both;
+    	clear:both;
 }
 
 #footer img {
