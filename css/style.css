@@ -162,6 +162,7 @@ body > #container {
 #footer {
 	background-color: #3f3f3f;
 	position: relative;
+	margin-top: 80px;
 	
 	/*formaat*/
 	height: 56px;
