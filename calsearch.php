@@ -7,7 +7,7 @@ $currYear = intval(date("Y"));
 $currMonth = intval(date("n"));
 $currDay = intval(date("j"));
 
-$querySearch = "SELECT subject, target_audience, description, start_date, end_date, start_time, end_time
+$querySearch = "SELECT event_id, subject, target_audience, description, start_date, end_date, start_time, end_time
                     FROM Events WHERE approved=1
                     AND (start_date LIKE ? OR end_date LIKE ?) AND (subject LIKE ? OR description LIKE ?)
                     ORDER BY start_date LIMIT ?, ?";
@@ -29,7 +29,6 @@ if(isset($_GET['p'])) {
         $searchPage = 1;
     }
 }
-
 
 if (isset($_GET['txt_search'])) {
     $defaultSubject = $defaultDescription = '%' . $_GET['txt_search'] . '%';
@@ -64,8 +63,9 @@ if ($stmt = $mysqli->prepare($querySearch)) {
         $defaultDescription, $defaultLimit1, $defaultLimit2);
 
     if ($stmt->execute() && $stmt->store_result()) {
-        $stmt->bind_result($subj, $target, $desc, $startDate, $endDate, $startTime, $endTime);
+        $stmt->bind_result($id, $subj, $target, $desc, $startDate, $endDate, $startTime, $endTime);
         $numResults = 0;
+        $following = getFollowingEvents();
 
         $i = 1;
         while ($stmt->fetch()) {
@@ -73,8 +73,12 @@ if ($stmt = $mysqli->prepare($querySearch)) {
                 $numResults++;
                 if ($i <= $resultsPerPage*$searchPage && $i > $resultsPerPage * ($searchPage-1)) {
                     $results .= '<div class="search_result"><p><h2>' . $subj . '</h2></p>' .
-                        '<p><h3>' . substr($startDate, 6) . ' at ' . substr($startTime, 0, 5) . '</h3></p>' .
-                        '<p>' . $desc . '</p></div>';
+                        '<p><h3>' . substr($startDate, 6) . ' at ' . substr($startTime, 0, 5);
+                    if(in_array($id, $following)) {
+                        $results .= ' following';
+                    }
+
+                    $results .= '</h3></p>' .'<p>' . $desc . '</p></div>';
                 }
                 $i++;
             }
@@ -159,6 +163,36 @@ function createSearchPage($page) {
     }
 
     return $url;
+}
+
+function getFollowingEvents() {
+    $queryFollowing = "SELECT event_id FROM Following WHERE user_id=(SELECT user_id FROM Users WHERE username=?)";
+
+    if(!isset($_SESSION['loggedin'])) {
+        return array();
+    }
+
+    $username = $_SESSION['username'];
+    $results = array();
+    global $mysqli;
+    if ($stmt = $mysqli->prepare($queryFollowing)) {
+        $stmt->bind_param('s', $username);
+
+        if ($stmt->execute() && $stmt->store_result()) {
+            $stmt->bind_result($event_id);
+            $results = array();
+
+            while ($stmt->fetch()) {
+                $results[] = $event_id;
+            }
+        }
+
+        $stmt->close();
+    } else {
+        echo 'Er zit een fout in de query: ' . $mysqli->error;
+    }
+
+    return $results;
 }
 
 ?>
