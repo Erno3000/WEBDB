@@ -9,7 +9,7 @@
 
 ?>
 
-
+</div>
 <div id="footer">
 
     <a href="http://validator.w3.org/check?uri=<?php echo $currentUrl?>">
