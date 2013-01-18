@@ -3,91 +3,25 @@
 $title = "Calendar";
 include("header.php");
 include('config.php');
+include('calsearch.php');
 
-const EMPLOYEES = 0x01;
-const SHAREHOLDERS = 0x02;
-const CUSTOMERS = 0x04;
-
-
-$querySearch = "SELECT subject, target_audience, description, start_date FROM Events WHERE approved=1
-                    AND (start_date LIKE ? OR end_date LIKE ?) AND (subject LIKE ? OR description LIKE ?)
-                    ORDER BY start_date LIMIT ?, ?";
-
-$defaultSubject = '%';
-$defaultTarget = EMPLOYEES | CUSTOMERS | SHAREHOLDERS;
-$defaultDescription = '%';
-$defaultDate = '____-__-__';
-$defaultLimit1 = 0;
-$defaultLimit2 = 184467440737;
-
-$resultsPerPage = 5;
-$searchPage = 1;
-$totalSearchPages = 1;
-
-if(isset($_GET['p'])) {
-    $searchPage = intval($_GET['p']);
-    if($searchPage <= 1) {
-        $searchPage = 1;
-    }
-}
-
-
-if (isset($_GET['txt_search'])) {
-    $defaultSubject = $defaultDescription = '%' . $_GET['txt_search'] . '%';
-}
-
-if (isset($_GET['search_year'])) {
-    $year = $_GET['search_year'];
-    if (preg_match('/\d\d\d\d/', $year)) {
-        $defaultDate = $year . '-__-__';
-    }
-}
-
-if (isset($_GET['employees']) || isset($_GET['customers']) || isset($_GET['shareholders'])) {
-    if (!isset($_GET['employees'])) {
-        $defaultTarget ^= EMPLOYEES;
-    }
-    if (!isset($_GET['customers'])) {
-        $defaultTarget ^= CUSTOMERS;
-    }
-    if (!isset($_GET['shareholders'])) {
-        $defaultTarget ^= SHAREHOLDERS;
-    }
-}
-
-
-$results = "";
+$queryCal = "SELECT subject, start_date, end_date, start_time, end_time FROM Events WHERE approved=1
+                    AND ((start_date LIKE ? OR end_date LIKE ?) OR (start_date LIKE ? OR end_date LIKE ?)
+                    OR (start_date LIKE ? OR end_date LIKE ?)) ORDER BY start_date, start_time";
 
 const WEEK = 0;
 const MONTH = 1;
 const YEAR = 2;
 
-const MAX_RESULTS = 5;
+const MIN_YEAR = 0;
+const MAX_YEAR = 9999;
+const MIN_MONTH = 1;
+const MAX_MONTH = 12;
+const MIN_DAY = 1;
+const MAX_DAY = 31;
 
-$mysqli = new mysqli($dbHost, $dbUser, $dbPass, $dbName);
-if ($stmt = $mysqli->prepare($querySearch)) {
-    $stmt->bind_param('ssssii', $defaultDate, $defaultDate, $defaultSubject,
-        $defaultDescription, $defaultLimit1, $defaultLimit2);
-
-    if ($stmt->execute() && $stmt->store_result()) {
-        $stmt->bind_result($subj, $target, $desc, $date);
-        $numResults = $stmt->num_rows;
-        $totalSearchPages = ceil($numResults / $resultsPerPage);
-
-        $i = 1;
-        while ($stmt->fetch()) {
-            if ($i <= $resultsPerPage*$searchPage && $i > $resultsPerPage * ($searchPage-1) && ($target & $defaultTarget) > 0) {
-                $results .= '<div class="search_result"><p><h2>' . $subj . '</h2></p><p>' . $desc . '<p></div>';
-            }
-            $i++;
-        }
-    }
-
-    $stmt->close();
-} else {
-    echo 'Er zit een fout in de query: ' . $mysqli->error;
-}
-
+const MONTHVIEW_ROWS = 6;
+const MONTHVIEW_COLS = 7;
 
 $calview = MONTH;
 
@@ -95,14 +29,7 @@ $currYear = intval(date("Y"));
 $currMonth = intval(date("n"));
 $currDay = intval(date("j"));
 
-$searchYears = "";
-for ($i = $currYear; $i >= 2000; $i--) {
-    if (isset($year) && $year == $i) {
-        $searchYears .= '<option value="' . $i . '" selected>' . $i . '</option>';
-    } else {
-        $searchYears .= '<option value="' . $i . '">' . $i . '</option>';
-    }
-}
+$request = $_GET;
 
 if (isset($_GET['calview'])) {
     $tmp = intval($_GET['calview']);
@@ -111,99 +38,172 @@ if (isset($_GET['calview'])) {
     }
 }
 
-function createSearchField()
-{
-    echo '<input type="text" id="txt_search" name="txt_search" autofocus="autofocus" value="';
-    if (isset($_GET['txt_search'])) {
-        echo strip_tags($_GET['txt_search']);
-    }
-    echo '" />';
+if(isset($_GET['y'])) {
+    $year = intval($_GET['y']);
+}
+if(isset($_GET['m'])) {
+    $month = intval($_GET['m']);
+}
+if(isset($_GET['d'])) {
+    $day = intval($_GET['d']);
 }
 
-function createTargetCheckbox($name, $bitmask)
-{
-    echo '<input type="checkbox" id="' . $name . '" name="' . $name . '" class="css3check" value="' . $name . '"';
-    global $defaultTarget;
-    if ($defaultTarget & $bitmask) {
-        echo ' checked="checked"';
-    }
-    echo ' />';
+if(isset($year) && isset($month) && isset($day) && validDate($year, $month, $day)) {
+    $request['y'] = intval($year);
+    $request['m'] = intval($month);
+    $request['d'] = intval($day);
+} else {
+    $request['y'] = $currYear;
+    $request['m'] = $currMonth;
+    $request['d'] = $currDay;
 }
 
-function createSearchPages() {
-    global $totalSearchPages;
-    global $searchPage;
+if($calview == YEAR) {
+    createYearCalview($currYear, $currMonth, $currDay);
+} else if($calview == MONTH) {
+    createMonthCalview($currYear, $currMonth, $currDay);
+} else {
+    createWeekCalview($currYear, $currMonth, $currDay);
+}
 
-    for($i = 1; $i < $totalSearchPages+1; $i++) {
-        if($i == $searchPage) {
-            echo '<span class="calsearch_footer_active">' . $i . '</span> ';
-        } else {
-            echo '<a href="' . createSearchPage($i) . '">' . $i . '</a> ';
-        }
+function validYear($year) {
+    return $year >= MIN_YEAR && $year <= MAX_YEAR;
+}
+
+function validMonth($month) {
+    return $month >= 1 && $month <= MAX_MONTH;
+}
+
+function validDay($day) {
+    return $day >= MIN_DAY && $day <= MAX_DAY;
+}
+
+function validDate($year, $month, $day) {
+    if(validYear($year) && validMonth($month) && validDay($day)) {
+        $daysOfMonth = date("t", mktime(0, 0, 0, $month, 1, $year));
+        return $day <= $daysOfMonth;
     }
 }
 
-function createSearchPage($page) {
-    $url = 'agenda.php?';
-    $first = true;
-    $found = false;
-
-    foreach($_GET as $k => $v) {
-        if($k == 'p') {
-            $v = $page;
-            $found = true;
-        }
-
-        if(!$first) {
-            $url .= '&';
-        }
-
-        $url .= $k . '=' . $v;
-
-        if($first) {
-            $first = false;
-        }
+function prevMonth($month) {
+    if($month == 1) {
+        return 12;
     }
 
-    if(!$found) {
-        if($first) {
-            $url .= 'p=' . $page;
-        } else {
-            $url .= '&p=' . $page;
-        }
+    return fixMonth($month - 1);
+}
+
+function nextMonth($month) {
+    if($month == 12) {
+        return fixMonth(1);
     }
 
-    return $url;
+    return fixMonth($month + 1);
+}
+
+function fixMonth($month) {
+    if($month <= 9) {
+        return '0' . $month;
+    }
+
+    return $month;
+}
+
+function createYearCalview($year, $month, $day) {
+    //todo
+}
+
+function createMonthCalview($year, $month, $day) {
+    global $dbHost, $dbUser, $dbPass, $dbName, $queryCal, $request;
+
+    $nextMonth = nextMonth($month);
+    $prevMonth = prevMonth($month);
+    $year = intval($request['y']);
+    $nextYear = $year + 1;
+    $prevYear = $year - 1;
+
+    $month = fixMonth($month);
+
+    $startDate1 = $endDate1 = $year . '-' . $prevMonth . '-__';
+    $startDate2 = $endDate2 = $year . '-' . $month . '-__';
+    $startDate3 = $endDate3 = $year . '-' . $nextMonth . '-__';
+
+    $events = array();
+
+    $mysqli = new mysqli($dbHost, $dbUser, $dbPass, $dbName);
+    if ($stmt = $mysqli->prepare($queryCal)) {
+        $stmt->bind_param('ssssss', $startDate1, $endDate1, $startDate2, $endDate2, $startDate3, $endDate3);
+
+        if ($stmt->execute() && $stmt->store_result()) {
+            $stmt->bind_result($rSubj, $rStartDate, $rEndDate, $rStartTime, $rEndTime);
+
+            //todo remove
+            $numResults = $stmt->num_rows;
+            echo 'Found ' . $numResults . 'events';
+
+            while ($stmt->fetch()) {
+                if(!isset($events[$rStartDate])) {
+                    $events[$rStartDate] = '';
+                }
+
+                $events[$rStartDate] .= '<div class="event">' . $rSubj . '</div>';
+            }
+        }
+
+        $stmt->close();
+    } else {
+        echo 'Er zit een fout in de query: ' . $mysqli->error;
+    }
+
+    $request["m"] = $prevMonth;
+    $prevMonthUrl = urlFromArray('agenda.php', $request);
+    $request["m"] = $nextMonth;
+    $nextMonthUrl = urlFromArray('agenda.php', $request);
+    $monthName = date("F", mktime(0, 0, 0, intval($request['m']), 1, 2000));
+    echo 'intval request m = ' . intval($request['m']);
+    $request["m"] = $month;
+    $request["y"] = $prevYear;
+    $prevYearUrl = urlFromArray('agenda.php', $request);
+    $request["y"] = $nextYear;
+    $nextYearUrl = urlFromArray('agenda.php', $request);
+
+
+    echo '<table id="calendar">
+    <caption>
+        <span id="month_caption">
+            <a href="' . $prevMonthUrl . '"><img src="img/previous_entry.png" alt="previous month" height="12px"></a>
+            <span id="month">' . $monthName . '</span>
+            <a href="' . $nextMonthUrl . '"><img src="img/next_entry.png" alt="next month" height="12px"></a>
+        </span>
+
+        <span id="year_caption">
+            <a href="' . $prevYearUrl . '"><img src="img/previous_entry.png" alt="previous year"
+                                                          height="12px"></a>
+            <span id="year">' . $year . '</span>
+            <a href="' . $nextYearUrl . '"><img src="img/next_entry.png" alt="next year" height="12px"></a>
+        </span>
+
+    </caption>
+
+    <tr id="weekdays">
+        <td>Monday</td>
+        <td>Tuesday</td>
+        <td>Wednesday</td>
+        <td>Thursday</td>
+        <td>Friday</td>
+        <td>Saturday</td>
+        <td>Sunday</td>
+    </tr>';
+
+
+}
+
+function createWeekCalview($year, $month, $day) {
+    //todo
 }
 
 ?>
 
-<div id="calsearch">
-    <form id="search" method="get" action="agenda.php">
-        <?php createSearchField(); ?><br/>
-
-        <?php createTargetCheckbox('employees', EMPLOYEES); ?>
-        <label for="employees" class="css3label">Employees</label><br/>
-        <?php createTargetCheckbox('shareholders', SHAREHOLDERS); ?>
-        <label for="shareholders" class="css3label">Shareholders</label><br/>
-        <?php createTargetCheckbox('customers', CUSTOMERS); ?>
-        <label for="customers" class="css3label">Customers</label><br/>
-
-        <select class="css3text" id="search_year" name="search_year">
-            <?php echo $searchYears ?>
-        </select>
-
-        <input type="submit" class="css3button" id="search_button" value="Zoeken"/>
-
-    </form>
-
-    <?php echo $results ?>
-
-    <div id="calsearch_footer">
-        <p><?php createSearchPages() ?></p>
-    </div>
-
-</div>
 
 <div id="calviews">
 <div id="calview_tabs">
@@ -260,34 +260,6 @@ function createSearchPage($page) {
 </div>
 
 
-<table id="calendar">
-    <caption>
-
-        <span id="month_caption">
-            <a href="javascript:calendar.prevMonth()"><img src="img/previous_entry.png" alt="previous month"
-                                                           height="12px"></a>
-            <span id="month">April</span>
-            <a href="javascript:calendar.nextMonth()"><img src="img/next_entry.png" alt="next month" height="12px"></a>
-        </span>
-
-        <span id="year_caption">
-            <a href="javascript:calendar.prevYear()"><img src="img/previous_entry.png" alt="previous year"
-                                                          height="12px"></a>
-            <span id="year">2011</span>
-            <a href="javascript:calendar.nextYear()"><img src="img/next_entry.png" alt="next year" height="12px"></a>
-        </span>
-
-    </caption>
-
-    <tr id="weekdays">
-        <td>Monday</td>
-        <td>Tuesday</td>
-        <td>Wednesday</td>
-        <td>Thursday</td>
-        <td>Friday</td>
-        <td>Saturday</td>
-        <td>Sunday</td>
-    </tr>
 
     <tr class="days">
         <td>28 March</td>
@@ -304,13 +276,7 @@ function createSearchPage($page) {
         <td></td>
         <td></td>
         <td></td>
-        <td class="selected">
-            <div class="event">Een borrel?</div>
-            <div class="event even">Nog een borrel?</div>
-            <div class="event">I guess</div>
-            <div class="event even">Why not?</div>
-            <div class="event">...</div>
-        </td>
+        <td></td>
         <td></td>
         <td></td>
     </tr>
@@ -418,14 +384,6 @@ function createSearchPage($page) {
 </table>
 
 </div>
-
-
-
-
-
-<script src="js/calendar.js"></script>
-<script type="text/javascript">calendar.init()</script>
-
 
 <?php include("footer.php") ?>
 
