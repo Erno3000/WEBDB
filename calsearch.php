@@ -72,13 +72,14 @@ if ($stmt = $mysqli->prepare($querySearch)) {
             if($target & $defaultTarget) {
                 $numResults++;
                 if ($i <= $resultsPerPage*$searchPage && $i > $resultsPerPage * ($searchPage-1)) {
-                    $results .= '<div class="search_result"><p><h2>' . $subj . '</h2></p>' .
+                    $results .= '<div class="search_result" onclick="javascript:slide.toggleDisplay(' . "'slide" . ($i-1) . "'" .
+                        ')"><p><h2>' . $subj . '</h2></p>' .
                         '<p><h3>' . substr($startDate, 6) . ' at ' . substr($startTime, 0, 5);
                     if(in_array($id, $following)) {
                         $results .= ' following';
                     }
 
-                    $results .= '</h3></p>' .'<p>' . $desc . '</p></div>';
+                    $results .= '</h3></p><p><div id="slide' . ($i-1) . '">' . $desc . '</div></p></div>';
                 }
                 $i++;
             }
@@ -180,7 +181,6 @@ function getFollowingEvents() {
 
         if ($stmt->execute() && $stmt->store_result()) {
             $stmt->bind_result($event_id);
-            $results = array();
 
             while ($stmt->fetch()) {
                 $results[] = $event_id;
@@ -223,3 +223,6 @@ function getFollowingEvents() {
     </div>
 
 </div>
+
+<script src="js/slide.js"></script>
+<script>slide.init();</script>
