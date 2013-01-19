@@ -171,16 +171,16 @@ function createMonthCalview($year, $month, $day) {
     echo '<table id="calendar">
     <caption>
         <span id="month_caption">
-            <a href="' . $prevMonthUrl . '"><img src="img/previous_entry.png" alt="previous month" height="12px"></a>
+            <a href="' . $prevMonthUrl . '"><img src="img/previous_entry.png" alt="previous month" height="12px" /></a>
             <span id="month">' . $monthName . '</span>
-            <a href="' . $nextMonthUrl . '"><img src="img/next_entry.png" alt="next month" height="12px"></a>
+            <a href="' . $nextMonthUrl . '"><img src="img/next_entry.png" alt="next month" height="12px" /></a>
         </span>
 
         <span id="year_caption">
             <a href="' . $prevYearUrl . '"><img src="img/previous_entry.png" alt="previous year"
-                                                          height="12px"></a>
+                                                          height="12px" /></a>
             <span id="year">' . $year . '</span>
-            <a href="' . $nextYearUrl . '"><img src="img/next_entry.png" alt="next year" height="12px"></a>
+            <a href="' . $nextYearUrl . '"><img src="img/next_entry.png" alt="next year" height="12px" /></a>
         </span>
 
     </caption>
@@ -216,34 +216,34 @@ function createWeekCalview($year, $month, $day) {
     <div id="calview_opt0">
             <span id="calview_opt0_week">
                 <a href="javascript:calendar.prevWeek()"><img src="img/previous_entry.png" alt="previous week"
-                                                              height="12px"></a>
+                                                              height="12px" /></a>
                 <span id="week">7 - 13. January 2013</span>
                 <a href="javascript:calendar.nextWeek()"><img src="img/next_entry.png" alt="next month"
-                                                              height="12px"></a>
+                                                              height="12px" /></a>
             </span>
     </div>
     <div id="calview_opt1">
             <span id="calview_opt1_month">
                 <a href="javascript:calendar.prevMonth()"><img src="img/previous_entry.png" alt="previous month"
-                                                               height="12px"></a>
+                                                               height="12px" /></a>
                 <span id="month">April</span>
-                <a href="javascript:calendar.nextMonth()"><img src="img/next_entry.png" alt="next month" height="12px"></a>
+                <a href="javascript:calendar.nextMonth()"><img src="img/next_entry.png" alt="next month" height="12px" /></a>
             </span>
 
             <span id="calview_opt1_year">
                 <a href="javascript:calendar.prevYear()"><img src="img/previous_entry.png" alt="previous year"
-                                                              height="12px"></a>
+                                                              height="12px" /></a>
                 <span id="year">2011</span>
                 <a href="javascript:calendar.nextYear()"><img src="img/next_entry.png" alt="next year"
-                                                              height="12px"></a>
+                                                              height="12px" /></a>
             </span>
     </div>
     <div id="calview_opt2">
             <span id="calview_opt2_year">
                 <a href="javascript:calendar.prevYear()"><img src="img/previous_entry.png" alt="previous year"
-                                                              height="12px"></a>
+                                                              height="12px" /></a>
                 <span id="year">2013</span>
-                <a href="javascript:calendar.nexYear()"><img src="img/next_entry.png" alt="next year" height="12px"></a>
+                <a href="javascript:calendar.nexYear()"><img src="img/next_entry.png" alt="next year" height="12px" /></a>
             </span>
     </div>
 
@@ -386,8 +386,3 @@ function createWeekCalview($year, $month, $day) {
 </div>
 
 <?php include("footer.php") ?>
-
-
-</body>
-
-</html>

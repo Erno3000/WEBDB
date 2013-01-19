@@ -12,7 +12,7 @@
 }
 
 #calendar caption {
-    background-color:#294ccc;
+    background:url("../img_mergeplx/cal_caption.png");
     color:#fff;
     padding:5px;
 }
@@ -28,7 +28,7 @@
 }
 
 #calendar #weekdays {
-    background-color:#dde5ec;
+    background:url("../img_mergeplx/cal_weekdays.png");
     text-align:center;
 }
 
@@ -147,4 +147,32 @@
 
 #search_button {
     margin-left:200px;
+}
+
+
+a.follow, a.follow:hover, a.unfollow, a.unfollow:hover {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+a.follow {
+    background:url("../img_mergeplx/follow.png") no-repeat;
+}
+
+a.follow:hover {
+    background:url("../img_mergeplx/follow_hover.png") no-repeat;
+}
+
+a.unfollow {
+    background:url("../img_mergeplx/unfollow.png") no-repeat;
+}
+
+a.unfollow:hover {
+    background:url("../img_mergeplx/unfollow_hover.png") no-repeat;
+}
+
+.result_buttons {
+    float:right;
+    width:30px;
 }

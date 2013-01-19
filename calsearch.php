@@ -34,6 +34,14 @@ if (isset($_GET['txt_search'])) {
     $defaultSubject = $defaultDescription = '%' . $_GET['txt_search'] . '%';
 }
 
+if(isset($_GET['follow']) && isset($_SESSION['loggedin'])) {
+    followEvent($_SESSION['id'], intval($_GET['follow']));
+}
+
+if(isset($_GET['unfollow']) && isset($_SESSION['loggedin'])) {
+    unfollowEvent($_SESSION['id'], intval($_GET['unfollow']));
+}
+
 if (isset($_GET['search_year'])) {
     $year = $_GET['search_year'];
     if (preg_match('/\d\d\d\d/', $year)) {
@@ -72,14 +80,22 @@ if ($stmt = $mysqli->prepare($querySearch)) {
             if($target & $defaultTarget) {
                 $numResults++;
                 if ($i <= $resultsPerPage*$searchPage && $i > $resultsPerPage * ($searchPage-1)) {
-                    $results .= '<div class="search_result" onclick="javascript:slide.toggleDisplay(' . "'slide" . ($i-1) . "'" .
-                        ')"><p><h2>' . $subj . '</h2></p>' .
-                        '<p><h3>' . substr($startDate, 6) . ' at ' . substr($startTime, 0, 5);
+                    $monthName = date("F", mktime(0, 0, 0, intval(substr($startDate, 5, 7)), 1, 2000));
+                    $day = intval(substr($startDate, 8, 9));
                     if(in_array($id, $following)) {
-                        $results .= ' following';
+                        $follow = '<div class="result_buttons"><a href="agenda.php?unfollow=' . $id . '" class="unfollow"></a></div>';
+                    } else if(isset($_SESSION['loggedin'])) {
+                        $follow = '<div class="result_buttons"><a href="agenda.php?follow=' . $id .'" class="follow"></a></div>';
+                    } else {
+                        $follow = '';
                     }
 
-                    $results .= '</h3></p><p><div id="slide' . ($i-1) . '">' . $desc . '</div></p></div>';
+                    $results .= '<div class="search_result" onclick="javascript:slide.toggleDisplay(' . "'slide" . ($i-1) . "'" .
+                        ')"><h2>' . $subj . '</h2>' .
+                        $follow . '<h3>' . $monthName . ' ' . $day . ' at ' . substr($startTime, 0, 5);
+
+
+                    $results .= '</h3><div id="slide' . ($i-1) . '">' . $desc . '</div></div>';
                 }
                 $i++;
             }
@@ -167,17 +183,17 @@ function createSearchPage($page) {
 }
 
 function getFollowingEvents() {
-    $queryFollowing = "SELECT event_id FROM Following WHERE user_id=(SELECT user_id FROM Users WHERE username=?)";
+    $queryFollowing = "SELECT event_id FROM Following WHERE user_id=?";
 
     if(!isset($_SESSION['loggedin'])) {
         return array();
     }
 
-    $username = $_SESSION['username'];
+    $id = $_SESSION['id'];
     $results = array();
     global $mysqli;
     if ($stmt = $mysqli->prepare($queryFollowing)) {
-        $stmt->bind_param('s', $username);
+        $stmt->bind_param('i', $id);
 
         if ($stmt->execute() && $stmt->store_result()) {
             $stmt->bind_result($event_id);
@@ -199,14 +215,14 @@ function getFollowingEvents() {
 
 <div id="calsearch">
     <form id="search" method="get" action="agenda.php">
-        <?php createSearchField(); ?><br/>
+        <?php createSearchField(); ?><br />
 
         <?php createTargetCheckbox('employees', EMPLOYEES); ?>
-        <label for="employees" class="css3label">Employees</label><br/>
+        <label for="employees" class="css3label">Employees</label><br />
         <?php createTargetCheckbox('shareholders', SHAREHOLDERS); ?>
-        <label for="shareholders" class="css3label">Shareholders</label><br/>
+        <label for="shareholders" class="css3label">Shareholders</label><br />
         <?php createTargetCheckbox('customers', CUSTOMERS); ?>
-        <label for="customers" class="css3label">Customers</label><br/>
+        <label for="customers" class="css3label">Customers</label><br />
 
         <select class="css3text" id="search_year" name="search_year">
             <?php echo $searchYears ?>
@@ -224,5 +240,5 @@ function getFollowingEvents() {
 
 </div>
 
-<script src="js/slide.js"></script>
-<script>slide.init();</script>
+<script src="js/slide.js" type="text/javascript"></script>
+<script type="text/javascript">slide.init();</script>
