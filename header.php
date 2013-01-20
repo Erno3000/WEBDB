@@ -16,11 +16,11 @@
     <link rel="stylesheet" type="text/css" href="css/style.css" />
     <link rel="stylesheet" type="text/css" href="css/register.css" />
     <link rel="stylesheet" type="text/css" href="css/create_item.css" />
-    <link rel="stylesheet" type="text/css" href="css/approve_user.css" />
+    
 </head>
 
 <body>
-
+<div id="container">
 <div class="header">
     <div class="headertopcontainer">
         <div class="headertop">
@@ -81,7 +81,7 @@
                 <?php
                     if (isset($_SESSION['loggedin'])) {
                     	if ($_SESSION['rank'] >= 1) {
-		                    echo '<li class="sep"><a href="create_item.php">
+		                    echo '<li class="sep"><a href="create_item.html">
 		                    	Create event</a></li>';
 		               	}
 		               	
@@ -91,14 +91,12 @@
 		                }
 		                
 		                if ($_SESSION['rank'] >= 3) {
-		                	echo '<li class="sep"><a href="approve_user.php">
-		                		Approve users</a></li>';
+		                    echo '<li class="sep"><a href="approve_user.php">
+		                    	Approve users</a></li>';
 		                }
-		     		}
+		     	}
                 ?>
             </ul>
         </div>
     </div>
 </div>
-</body>
-</html>
