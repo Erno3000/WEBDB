@@ -1,5 +1,41 @@
 <?php
-	session_start();
+    session_start();
+
+    const GUEST = -1;
+    const USER = 0;
+    const AUTHOR = 1;
+    const MODERATOR = 2;
+    const ADMIN = 3;
+
+    /* This function takes a string holding a rank as an argument (e.g. GUEST, USER, AUTHOR, etc...).
+     * If the user is not logged in, he will be redirected to the index.php page.
+     * If he is logged in, but doesn't have the given, required rank ($rank parameter), he is redirected to the
+     * index.php page.
+     * If the user is logged in and has the required rank, no action is taken.
+     */
+    function requireRank($rank) {
+        if (isset($_SESSION['loggedin']) && $_SESSION['loggedin']) {
+            if($rank == 'GUEST') {
+                $rank = GUEST;
+            } elseif ($rank == 'USER') {
+                $rank = USER;
+            } elseif ($rank == 'AUTHOR') {
+                $rank = AUTHOR;
+            } elseif ($rank == 'MODERATOR') {
+                $rank = MODERATOR;
+            } elseif ($rank == 'ADMIN') {
+                $rank = ADMIN;
+            } else {
+                $rank = -1;
+            }
+
+            if ($_SESSION['rank'] < intval($rank)) {
+                header('Location: index.php');
+            }
+        } else {
+            header('Location: index.php');
+        }
+    }
 ?>
 
 
