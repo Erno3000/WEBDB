@@ -152,24 +152,39 @@
 
 a.follow, a.follow:hover, a.unfollow, a.unfollow:hover {
     display: inline-block;
-    width: 16px;
-    height: 16px;
-}
-
-a.follow {
-    background:url("../img_mergeplx/follow.png") no-repeat;
-}
-
-a.follow:hover {
-    background:url("../img_mergeplx/follow_hover.png") no-repeat;
+    width: 32px;
+    height: 32px;
 }
 
 a.unfollow {
-    background:url("../img_mergeplx/unfollow.png") no-repeat;
+    background:url("../img_mergeplx/follow.png") no-repeat;
 }
 
 a.unfollow:hover {
-    background:url("../img_mergeplx/unfollow_hover.png") no-repeat;
+    background:url("../img_mergeplx/unfollow.png") no-repeat;
+}
+
+a.follow {
+    background:url("../img_mergeplx/unfollow.png") no-repeat;
+}
+
+a.follow:hover {
+    background:url("../img_mergeplx/follow.png") no-repeat;
+}
+
+a.unfollow span, a.follow span {
+    display:none;
+    padding:2px 3px;
+    margin-left:18px;
+    width:130px;
+}
+
+a.follow:hover span, a.unfollow:hover span {
+    display:inline;
+    position:absolute;
+    background:#ffffff;
+    border:1px solid #cccccc;
+    color:#6c6c6c;
 }
 
 .result_buttons {

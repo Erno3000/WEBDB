@@ -83,9 +83,9 @@ if ($stmt = $mysqli->prepare($querySearch)) {
                     $monthName = date("F", mktime(0, 0, 0, intval(substr($startDate, 5, 7)), 1, 2000));
                     $day = intval(substr($startDate, 8, 9));
                     if(in_array($id, $following)) {
-                        $follow = '<div class="result_buttons"><a href="agenda.php?unfollow=' . $id . '" class="unfollow"></a></div>';
+                        $follow = '<div class="result_buttons"><a href="agenda.php?unfollow=' . $id . '" class="unfollow"><span>Unfollow event</span></a></div>';
                     } else if(isset($_SESSION['loggedin'])) {
-                        $follow = '<div class="result_buttons"><a href="agenda.php?follow=' . $id .'" class="follow"></a></div>';
+                        $follow = '<div class="result_buttons"><a href="agenda.php?follow=' . $id .'" class="follow"><span>Follow event</span></a></div>';
                     } else {
                         $follow = '';
                     }
