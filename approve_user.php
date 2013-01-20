@@ -1,27 +1,11 @@
 <?php
-	session_start();
 	$title = "Approve User";
+	include('header.php'); 
 ?>
 
-
-<?xml version="1.1" encoding="utf-8" ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-
-<head>
-    <title><?php echo $title ?></title>
-    <link rel="stylesheet" href="css/forms.css" />
-    <link rel="stylesheet" href="css/reset.css" />
-    <link rel="stylesheet" href="css/calendar.css" />
-    <link rel="stylesheet" type="text/css" href="css/style.css" />    
-</head>
-
-<body>
-	<?php include('header.php'); ?>
-	<h1>Approve or edit users for author or moderator.</h1>
-	<p>Select a user to edit or approve:</p>
+	<h1>Select a user to edit or approve:</h1><br />
 		
-	<?php>
+	<?php
 		/* Set up a new connection to the database. */
 		include('dbconnect.php');
 		    			
@@ -32,19 +16,16 @@
 		
 		/* Prepare the query. */
 		$query = 'SELECT user_id, username, first_name, last_name, email, rank FROM Users
-			SORT BY user_id';
+			ORDER BY user_id';
 		
 		/* First we prepare the query for execution. */
 		if($stmt = $mysqli->prepare($query)) {
-			//$stmt->bind_param('ss', $_POST["username"], $_POST["pwd"]);
-			
 			/* Then we execute the query. */
 			if($stmt->execute()) {
 				/* And output it in an HTML table. */
 				if ($stmt->store_result()) {
 					$stmt->bind_result($id, $user, $fname, $lname, $email, $rank);
-					
-					echo '<table border="1"> <tr>' .
+					echo '<table border="1" id="userstable"> <tr>' .
 						'<th>ID</th>' .
 						'<th>Username</th>' .
 						'<th>First name</th>' .
@@ -58,7 +39,29 @@
 							'<td>' . $user . '</td>' .
 							'<td>' . $fname . '</td>' .
 							'<td>' . $lname . '</td>' .
-							'<td>' . $rank . '</td> </tr>';
+							'<td>' . $email . '</td>';
+							
+							if ($rank == 0) {
+								echo '<td>User</td>';
+							}
+							
+							if ($rank == 1) {
+								echo '<td>Author</td>';
+							}
+							
+							if ($rank == 2) {
+								echo '<td>Moderator</td>';
+							}
+							
+							if ($rank == 3) {
+								echo '<td>Admin</td>';
+							}
+							
+							if ($rank < 0 or $rank > 3) {
+								echo '<td>Hacker</td>';
+							}
+								
+							echo '</tr>';
 					}
 					
 					echo '</table>';
@@ -70,5 +73,3 @@
 		
 	
 	<?php include('footer.php'); ?>
-</body>
-</html>

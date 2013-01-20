@@ -16,6 +16,7 @@
     <link rel="stylesheet" type="text/css" href="css/style.css" />
     <link rel="stylesheet" type="text/css" href="css/register.css" />
     <link rel="stylesheet" type="text/css" href="css/create_item.css" />
+    <link rel="stylesheet" type="text/css" href="css/table_form.css" />
     
 </head>
 
