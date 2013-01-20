@@ -1,7 +1,8 @@
 <?php
 
 /* TODO!
-- check of checkbox minimaal 1 vinkje heeft
+- check of checkbox minimaal 1 vinkje heeft (werkt nog niet!)
+- user_id kan niet geimporteerd worden
 */
 	$title = "Create event";
 	include("header.php");
@@ -14,6 +15,7 @@
     const CUSTOMERS = 0x04;
 
 	$formError = false;
+    //$user_id = $_SESSION['user_id'];
 	$currentYear = intval(date("Y"));
 	$currentMonth = date("F");
 	$currentDay = intval(date("j"));
@@ -30,13 +32,13 @@
 		      VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, 0)";
 
 		//Alleen registreren wanneer alles is ingevoerd
-		if(isset($_POST['subject']) && isset($_POST['target']) 
-		&& isset($_POST['description']) && isset($_POST['start_month'])
-		&& isset($_POST['start_day']) && isset($_POST['start_year'])
-		&& isset($_POST['end_month']) && isset($_POST['end_day'])
-		&& isset($_POST['end_year']) && isset($_POST['time1'])
-		&& isset($_POST['time2']) && isset($_POST['time3']) 
-		&& isset($_POST['time4']) && isset($_POST['place'])) {
+		if(isset($_POST['subject'])	&& isset($POST['target'])
+            && isset($_POST['description']) && isset($_POST['start_month'])
+            && isset($_POST['start_day']) && isset($_POST['start_year'])
+            && isset($_POST['end_month']) && isset($_POST['end_day'])
+            && isset($_POST['end_year']) && isset($_POST['time1'])
+            && isset($_POST['time2']) && isset($_POST['time3'])
+            && isset($_POST['time4']) && isset($_POST['place'])) {
 	
 			//Plaats de geposte data (gelinked aan namen uit het form) in variabelen
 			//$user_id = $SESSION['user_id'];
@@ -57,6 +59,8 @@
 			$seconds = 00;
 			$start_date = $start_year . '-' . $start_month . '-' . $start_day;
 			$end_date = $end_year . '-' . $end_month . '-' . $end_day;
+            $start_time = $time1 . ':' . $time2 . ':' . $seconds;
+            $end_time = $time3 . ':' . $time4 . ':' . $seconds;
 
             $target = 0;
             if(in_array('employees', $targetArray)) {
@@ -68,6 +72,9 @@
             if(in_array('customers', $targetArray)) {
                 $target |= CUSTOMERS;
             }
+            if(!isset($POST['target'])) {
+                error($targetError, "Check at least one box");
+            }
 
 			//Check de lengte van de geposte data
 			requireLength($subject, 1, 50, $subjectError);
@@ -75,13 +82,13 @@
 			requireLength($place, 1, 100, $placeError);
 			validStartDate($start_month, $start_day, $start_year, $start_date, $startDateError);
 			validEndDate($end_month, $end_day, $end_year, $start_date, $end_date, $endDateError);
+
+            if(strtotime($end_date) == strtotime($start_date) && strtotime($end_time) <= strtotime($start_time)) {
+                error($timeError, "Enter a valid End Time");
+            }
 			
 			if(!$formError) {
 				if($stmt = $mysqli->prepare($queryRegister)) {
-					//$start_date = $start_year . '-' . $start_month . '-' . $start_day;
-					//$end_date = $end_year . '-' . $end_month . '-' . $end_day;
-					$start_time = $time1 . ':' . $time2 . ':' . $seconds;
-					$end_time = $time3 . ':' . $time4 . ':' . $seconds;
 					$stmt->bind_param('sissssss', $subject, $target, $description, $start_date, $end_date, $start_time, $end_time, $place);
 						
 					if(!$stmt->execute()) {
@@ -117,12 +124,12 @@
 
 	function validStartDate($month, $day, $year, $start_date, &$error) {
 		global $currentDate;
-		$yearpattern = '[2-9][0-9][0-9][0-9]';
+		$yearpattern = '/^[2-9][0-9][0-9][0-9]$/';
     	if(!preg_match($yearpattern, $year)) {
     		error($error, "Enter a valid year");
 		} else if(!checkdate($month, $day, $year)) {
 			error($error, "Enter a valid date");
-		} else if(strtotime($start_date) < strtotime($currentDate)) {
+		} else if(strtotime($start_date) <= strtotime($currentDate)) {
 			error($error, "Enter a Start Date in the future");
 		}
 	}
@@ -189,16 +196,10 @@
         print '</label>';
         print '<div id="' . $id . '">';
     	print '<input type="' . $type . '" name="' . $name . '" value="' . $value1 . '"';
-        if(isset($error)) {
-			print ' class="errorinput"';
-        }
         print ' />';
 		print $name1;
         print '<br />';
         print '<input type="' . $type . '" name="' . $name . '" value="' . $value2 . '"';
-        if(isset($error)) {
-			print ' class="errorinput"';
-        }
         print ' />';
 		print $name2;
         print '<br />';
@@ -264,7 +265,7 @@
 		print '</li>';
     }
 
-	function createTime($id, $label, $mandatory, $time1, $time2) {
+	function createTime(&$error, $id, $label, $mandatory, $time1, $time2) {
 		$timeformat = '<option value="%1$02d">%1$02d</option>';
 
 		print '<li><label for="' . $id . '">' . $label . ':';
@@ -281,7 +282,13 @@
         for ($i = 0; $i <= 59; $i++) {
         	print sprintf($timeformat,$i,$i);
     	}
+        if(isset($error)) {
+            print ' class="errorinput"';
+        }
     	print '</select>';
+        if(isset($error)) {
+            print '<span class="errormsg">' . $error . '</span>';
+        }
 		print '<br />';
 		print '</li>';
     }
@@ -301,9 +308,9 @@
 		createCheckbox($target, $targetError, 'target', 'target[]', 'Target audience', true, 'employees', 'shareholders', 'customers', 'Employees', 'Shareholders', 'Customers');
 		createTextarea($description, $descriptionError, 'description', 'Description', true, '35', '5', 'maximum', 'Maximum of 500 characters.');
 		createDate($startDateError, 'start_date', 'Start Date', true, 'start_month', 'start_day', 'start_year');
-		createTime('start_time', 'Start Time', true, 'time1', 'time2');
+		createTime($timeError, 'start_time', 'Start Time', true, 'time1', 'time2');
 		createDate($endDateError, 'end_date', 'End Date', true, 'end_month', 'end_day', 'end_year');
-		createTime('end_time', 'End Time', true, 'time3', 'time4');
+		createTime($timeError, 'end_time', 'End Time', true, 'time3', 'time4');
 		createField($place, $placeError, 'place', 'Place', true, 'maximum', 'Maximum of 100 characters.', '30');
 
 				          echo '<li>
