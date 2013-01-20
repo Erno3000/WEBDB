@@ -82,7 +82,7 @@
                 <?php
                     if (isset($_SESSION['loggedin'])) {
                     	if ($_SESSION['rank'] >= 1) {
-		                    echo '<li class="sep"><a href="create_item.html">
+		                    echo '<li class="sep"><a href="create_item.php">
 		                    	Create event</a></li>';
 		               	}
 		               	
