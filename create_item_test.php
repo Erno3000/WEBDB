@@ -2,11 +2,12 @@
 
 /* TODO!
 - check of checkbox minimaal 1 vinkje heeft
-- check of volledige datum geldig is, dmv: bool checkdate (int $month, int $day, int $year)
 */
 	$title = "Create event";
 	include("header.php");
 	include('config.php');
+
+    requireRank("AUTHOR");
 
     const EMPLOYEES = 0x01;
     const SHAREHOLDERS = 0x02;
@@ -128,7 +129,7 @@
 
 	function validEndDate($month, $day, $year, $start_date, $end_date, &$error) {
 		global $currentDate;
-		$yearpattern = '[2-9][0-9][0-9][0-9]';
+		$yearpattern = '/^[2-9][0-9][0-9][0-9]$/';
     	if(!preg_match($yearpattern, $year)) {
     		error($error, "Enter a valid year");
 		} else if(!checkdate($month, $day, $year)) {
@@ -215,7 +216,7 @@
         print '</li>';
 	}
 
-	function createDate($id, $label, $mandatory, $month, $day, $year) {
+	function createDate(&$error, $id, $label, $mandatory, $month, $day, $year) {
 		global $currentYear;
 		global $currentMonth;
 		global $currentDay;
@@ -250,7 +251,14 @@
    		}
     	print '</select>';
     	print ' Year:';
-    	print '<input type="text" name="' . $year . '" value="' . $currentYear . '" size="4" />';
+    	print '<input type="text" name="' . $year . '" value="' . $currentYear . '" size="4"';
+        if(isset($error)) {
+			print ' class="errorinput"';
+        }
+    	print '/>';
+        if(isset($error)) {
+            print '<span class="errormsg">' . $error . '</span>';
+        }
 		print '<br />';
 		print '</div>';
 		print '</li>';
@@ -279,36 +287,36 @@
     }
 ?>
 
-<?php 
+<?php
 	if(!isset($post) || (isset($post) && $formError)) {
-		echo '<div id="content">
-    			<h1>Create event</h1>
-					<div id="ccform">
-						<form method="post" action="create_item_test.php">
-							<fieldset>
-            					<legend>Fill in this form to create a new event</legend>
-									<ul>';
+	  echo '<div id="content">
+                <h1>Create event</h1>
+				<div id="ccform">
+	        			<form method="post" action="create_item_test.php">
+						<fieldset>
+            			<legend>Fill in this form to create a new event</legend>
+							<ul>';
 
 		createField($subject, $subjectError, 'subject', 'Subject', true, 'maximum', 'Maximum of 50 characters.', '30');
 		createCheckbox($target, $targetError, 'target', 'target[]', 'Target audience', true, 'employees', 'shareholders', 'customers', 'Employees', 'Shareholders', 'Customers');
 		createTextarea($description, $descriptionError, 'description', 'Description', true, '35', '5', 'maximum', 'Maximum of 500 characters.');
-		createDate('start_date', 'Start Date', true, 'start_month', 'start_day', 'start_year');
+		createDate($startDateError, 'start_date', 'Start Date', true, 'start_month', 'start_day', 'start_year');
 		createTime('start_time', 'Start Time', true, 'time1', 'time2');
-		createDate('end_date', 'End Date', true, 'end_month', 'end_day', 'end_year');
+		createDate($endDateError, 'end_date', 'End Date', true, 'end_month', 'end_day', 'end_year');
 		createTime('end_time', 'End Time', true, 'time3', 'time4');
 		createField($place, $placeError, 'place', 'Place', true, 'maximum', 'Maximum of 100 characters.', '30');
 
-				echo '<li>
-					<br />
-					<label for="submit">&nbsp;</label>
-						<input type="submit" id="submit" name="submit" value="Submit" />
-					</li>
-				</ul>
-				<p class="mandatory"><br />Fields marked with an asterisk (*) are mandatory.</p>
-				</fieldset>
-			</form>
-		</div>
-	</div>';
+				          echo '<li>
+				                    <br />
+					                <label for="submit">&nbsp;</label>
+						            <input type="submit" id="submit" name="submit" value="Submit" />
+					            </li>
+                            </ul>
+				            <p class="mandatory"><br />Fields marked with an asterisk (*) are mandatory.</p>
+                        </fieldset>
+                    </form>
+		        </div>
+	        </div>';
 	}
 
 	include('footer.php');
