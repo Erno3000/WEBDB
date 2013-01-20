@@ -40,6 +40,10 @@
 							'<td>' . $fname . '</td>' .
 							'<td>' . $lname . '</td>' .
 							'<td>' . $email . '</td>';
+
+                            if ($rank == -1) {
+                                echo '<td>Unactived User</td>';
+                            }
 							
 							if ($rank == 0) {
 								echo '<td>User</td>';
@@ -57,7 +61,7 @@
 								echo '<td>Admin</td>';
 							}
 							
-							if ($rank < 0 or $rank > 3) {
+							if ($rank < -1 or $rank > 3) {
 								echo '<td>Hacker</td>';
 							}
 								
