@@ -98,7 +98,7 @@
 		   					echo '<div class="loginbar2">'. 
 		   						'<ul>
 		   							<li><a href="myevents.php">My events</a></li>
-		   							<li><a href="accountsettings.html">
+		   							<li><a href="account_settings.php">
 		   								Account settings</a></li>
 		   							<li><a href="logout.php">Logout</a></li>
 		   						</ul>';
