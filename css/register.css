@@ -1,0 +1,53 @@
+.center {
+    margin: auto;
+    width: 70%;
+    overflow: auto;
+}
+
+p.rule {
+    font-size: 80%;
+}
+
+#caform ul {
+    list-style: none;
+    padding: 0px 0px;
+}
+
+#caform li {
+    padding: 2px 0px;
+}
+
+#caform input[type='text'], input[type='password'] {
+    width: 200px;
+}
+
+#caform label {
+    font-weight: bold;
+    font-size: 100%;
+    width: 10em;
+    float: left;
+    text-align: left;
+    margin-right: 0.5em;
+    display: block;
+}
+
+fieldset {
+    border:1px solid #e2e2e2;
+    width: 400px;
+    height: 240px;
+}
+
+h1 {
+    font-size:110%;
+    margin-bottom:10px;
+}
+
+.errorinput {
+    color: #A00;
+    background-color: #FDD;
+}
+
+.errormsg {
+    margin-left:5px;
+    color: #940000;
+}
