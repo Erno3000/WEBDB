@@ -35,7 +35,7 @@ if ($stmt = $mysqli->prepare($query)) {
             echo '<table border="1" id="myevents"> <tr>' .
                 '<th>Subject</th>' .
                 '<th>Target audience</th>' .
-                '<th>Description</th>' .
+                '<th id="description">Description</th>' .
                 '<th>Place</th>' .
                 '<th>Start date</th>' .
                 '<th>Start time</th>' .
