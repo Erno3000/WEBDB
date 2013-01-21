@@ -3,12 +3,12 @@ $title = "Account settings";
 include('header.php');
 
 if (!isset($_SESSION['loggedin'])) {
-    header('Location: index.php');
+    header('Location: agenda.php');
 }
 ?>
 
 <div id="content">
-    <h1>Edit or review your account settings here.</h1><br/>
+    <!--<h1>Edit or review your account settings here.</h1><br/>-->
 
     <?php
     /* Set up a new connection to the database. */
@@ -36,7 +36,7 @@ if (!isset($_SESSION['loggedin'])) {
                 $stmt->bind_result($id, $fname, $lname, $username, $password, $email, $rank);
                 $stmt->fetch();
 
-                echo '<h2>Account information:</h2>';
+                echo '<h1>Account information:</h1>';
                 echo '<ul> <li>Username: ' . $username . '</li>';
                 echo '<li>First name: ' . $fname . '</li>';
                 echo '<li>Last name: ' . $lname . '</li>';
@@ -64,20 +64,20 @@ if (!isset($_SESSION['loggedin'])) {
 
                 echo '</ul> <br />';
 
-                echo '<h2>Edit Account Information</h2>';
-                echo '<p>Edit only the fields which you would like to change</p>';
+                echo '<h1>Edit Account Information</h1>';
 
                 echo '<form action="account_settings.php" method="post" id="accountsettingsform"> <fieldset>
-                    <label for="currentpassword">Current password:</label>
-                        <input type="password" class="css3text" name="currentpassword" id="currentpassword" /> <br />
-                    <label for="newpassword">New password:</label>
-                        <input type="password" class="css3text" name="newpassword" id="newpassword" /> <br />
-                    <label for="newpasswordretyped">Retype new password:</label>
-                        <input type="password" class="css3text" name="newpasswordretyped" id="newpasswordretyped" /> <br />
-                    <label for="newemail">Email:</label>
-                        <input type="email" class="css3text" name="newemail" id="newemail" value=' . $email . '> <br />
-                    <input type="submit" value="Save changes" />
-                </fieldset> </form> <br />';
+                <legend>Edit only the fields which you would like to change</legend> <ul>
+                    <li> <label for="currentpassword">Current password:</label>
+                        <input type="password" class="css3text" name="currentpassword" id="currentpassword" /> <br /> </li>
+                    <li> <label for="newpassword">New password:</label>
+                        <input type="password" class="css3text" name="newpassword" id="newpassword" /> <br /> </li>
+                    <li> <label for="newpasswordretyped">Retype new password:</label>
+                        <input type="password" class="css3text" name="newpasswordretyped" id="newpasswordretyped" /> <br /> </li>
+                    <li> <label for="newemail">Email:</label>
+                        <input type="email" class="css3text" name="newemail" id="newemail" value=' . $email . '> <br /> </li>
+                    <li> <input type="submit" value="Save changes" /> </li>
+                </ul> </fieldset> </form> <br />';
 
                 if ($_POST) {
                     $changed_something = false;

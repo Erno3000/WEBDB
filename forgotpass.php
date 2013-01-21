@@ -1,6 +1,9 @@
-  <?php
+<?php
     $title = "Forgot password";
-  include('header.php');
+    include('header.php');
+    if (isset($_SESSION['loggedin'])) {
+        header('Location: agenda.php');
+    }
 ?>
 <div id="content">
 	<h1>Please enter your email.</h1>
