@@ -53,7 +53,7 @@
     <link rel="stylesheet" type="text/css" href="css/register.css" />
     <link rel="stylesheet" type="text/css" href="css/create_item.css" />
     <link rel="stylesheet" type="text/css" href="css/table_form.css" />
-    
+    <link rel="icon" type="image/x-icon" href="smile.ico" />
 </head>
 
 <body>
