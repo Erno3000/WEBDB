@@ -8,7 +8,7 @@ const CUSTOMERS = 0x04;
 include('header.php');
 ?>
 
-<div id="myevents">
+<div id="content">
 <h1>Showing all of your events.</h1><br/>
 
 <?php
@@ -32,11 +32,11 @@ if ($stmt = $mysqli->prepare($query)) {
         if ($stmt->store_result()) {
             $stmt->bind_result($a, $b, $b, $starter, $subject, $target_audience, $description, $start_date, $end_date,
                 $start_time, $end_time, $place, $approved);
-            echo '<table border="1" id="eventstable"> <tr>' .
-                '<th>Subject</th>' .
-                '<th>Target audience</th>' .
-                '<th>Description</th>' .
-                '<th>Place</th>' .
+            echo '<table border="1" id="myevents"> <tr>' .
+                '<th class="normalth">Subject</th>' .
+                '<th class="normalth">Target audience</th>' .
+                '<th id="description">Description</th>' .
+                '<th class="normalth">Place</th>' .
                 '<th>Start date</th>' .
                 '<th>Start time</th>' .
                 '<th>End date</th>' .

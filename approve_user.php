@@ -1,8 +1,9 @@
 <?php
 	$title = "Approve User";
-	include('header.php'); 
+	include('header.php');
+    requireRank("ADMIN");
 ?>
-
+<div id="content">
 	<h1>Select a user to edit or approve:</h1><br />
 		
 	<?php
@@ -42,7 +43,7 @@
 							'<td>' . $email . '</td>';
 
                             if ($rank == -1) {
-                                echo '<td>Unactived User</td>';
+                                echo '<td>Unactivated User</td>';
                             }
 							
 							if ($rank == 0) {
@@ -74,6 +75,5 @@
 		}
 		/* We are now done with the php script. */
 	?>
-		
-	
-	<?php include('footer.php'); ?>
+</div>
+<?php include('footer.php'); ?>

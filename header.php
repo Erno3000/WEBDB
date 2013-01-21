@@ -30,10 +30,10 @@
             }
 
             if ($_SESSION['rank'] < intval($rank)) {
-                header('Location: index.php');
+                header('Location: agenda.php');
             }
         } else {
-            header('Location: index.php');
+            header('Location: agenda.php');
         }
     }
 ?>
@@ -53,7 +53,8 @@
     <link rel="stylesheet" type="text/css" href="css/register.css" />
     <link rel="stylesheet" type="text/css" href="css/create_item.css" />
     <link rel="stylesheet" type="text/css" href="css/table_form.css" />
-    
+    <link rel="icon" type="image/x-icon" href="smile.ico" />
+    <link rel="stylesheet" type="text/css" href="css/account_settings.css" />
 </head>
 
 <body>
@@ -64,7 +65,7 @@
             
             <div id="logo">
                 <a href="">
-                    <img src="" />
+                    <img src="" alt="" />
                 </a>
             </div>
                       
@@ -75,12 +76,14 @@
                     	echo '                
 		                    <div class="loginpane">
 		                    	<form action="login.php" method="post">
-		                    		<input type="text" class="css3text" name="username"
-				                    	id="username" placeholder="username" />
-				                    <input type="password" class="css3text" name="pwd"
-				                    	id="password" placeholder="password" />
-				                    <input type="submit" class="css3button" id="submit"
-				                    	value="Login" />
+		                    		<fieldset class="normal">
+		                    			<input type="text" class="css3text" name="username"
+				                    		id="username" placeholder="username" />
+				                    	<input type="password" class="css3text" name="pwd"
+				                    		id="password" placeholder="password" />
+				                    	<input type="submit" class="css3button" id="submit"
+				                    		value="Login" />
+				                    </fieldset>
 		                    	</form>
 		                    </div>
 		                    

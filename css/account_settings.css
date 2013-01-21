@@ -1,0 +1,33 @@
+p.mandatory {
+    font-size: 80%;
+    padding-left: 10px;
+}
+
+p.maximum {
+	margin-left: 9em;
+}
+
+#accountsettingsform label {
+    font-weight: bold;
+    font-size: 105%;
+    width: 8em;
+    float: left;
+    text-align: left;
+    margin-right: 0.5em;
+    display: block;
+}
+
+fieldset {
+    width: 30em;
+    height: 33em;
+}
+
+.errorinput {
+    color: #A00;
+    background-color: #FDD;
+}
+
+.errormsg {
+    margin-left:5px;
+    color: #940000;
+}
