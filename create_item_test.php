@@ -44,7 +44,7 @@
 
             echo '1';
 
-            //Set the posted data (linked to names from the form) in variables.
+            //Set the posted data (linked to names from the form) into variables.
             $user_id = $_SESSION['id'];
             $subject = strip_tags($_POST['subject']);
             $targetArray = $_POST['target'];
@@ -333,7 +333,7 @@
 		createTime($end_timeError, 'end_time', 'End Time', true, 'time3', 'time4');
 		createField($place, $placeError, 'place', 'Place', true, 'maximum', 'Maximum of 100 characters.', '30');
 
-				          echo '<li>
+				           echo '<li>
 				                    <br />
 					                <label for="submit">&nbsp;</label>
 						            <input type="submit" id="submit" name="submit" value="Submit" />
