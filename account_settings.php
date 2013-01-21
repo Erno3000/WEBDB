@@ -7,7 +7,7 @@ if (!isset($_SESSION['loggedin'])) {
 }
 ?>
 
-<div id="accountsettings">
+<div id="content">
     <h1>Edit or review your account settings here.</h1><br/>
 
     <?php
