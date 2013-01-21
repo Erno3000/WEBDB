@@ -82,7 +82,8 @@ if (!isset($_SESSION['loggedin'])) {
                 if ($_POST) {
                     $changed_something = false;
 
-                    if(isset($_POST['currentpassword']) && isset($_POST['newpassword']) && isset($_POST['newpasswordretyped'])) {
+                    if(isset($_POST['currentpassword']) && isset($_POST['newpassword']) && isset($_POST['newpasswordretyped'])
+                    && !empty($_POST['currentpassword']) && !empty($_POST['newpassword']) && !empty($_POST['newpasswordretyped'])) {
                         echo '1, ';
 
                         if (!checkPassword($password, $_POST['currentpassword'])) {
@@ -111,7 +112,7 @@ if (!isset($_SESSION['loggedin'])) {
 
                     echo '7, ';
 
-                    if (isset($_POST['newemail']) && $_POST['newemail'] != $email) {
+                    if (isset($_POST['newemail']) && $_POST['newemail'] != $email && !empty($_POST['newemail'])) {
                         $query_changeemail = 'UPDATE Users SET email=? WHERE user_id=? LIMIT 1';
                         echo '8, ';
 
