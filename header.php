@@ -75,12 +75,14 @@
                     	echo '                
 		                    <div class="loginpane">
 		                    	<form action="login.php" method="post">
-		                    		<input type="text" class="css3text" name="username"
-				                    	id="username" placeholder="username" />
-				                    <input type="password" class="css3text" name="pwd"
-				                    	id="password" placeholder="password" />
-				                    <input type="submit" class="css3button" id="submit"
-				                    	value="Login" />
+		                    		<fieldset class="normal">
+		                    			<input type="text" class="css3text" name="username"
+				                    		id="username" placeholder="username" />
+				                    	<input type="password" class="css3text" name="pwd"
+				                    		id="password" placeholder="password" />
+				                    	<input type="submit" class="css3button" id="submit"
+				                    		value="Login" />
+				                    </fieldset>
 		                    	</form>
 		                    </div>
 		                    
