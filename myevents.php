@@ -33,15 +33,15 @@ if ($stmt = $mysqli->prepare($query)) {
             $stmt->bind_result($a, $b, $b, $starter, $subject, $target_audience, $description, $start_date, $end_date,
                 $start_time, $end_time, $place, $approved);
             echo '<table border="1" id="myevents"> <tr>' .
-                '<th>Subject</th>' .
-                '<th>Target audience</th>' .
+                '<th class="normalth">Subject</th>' .
+                '<th class="normalth">Target audience</th>' .
                 '<th id="description">Description</th>' .
-                '<th>Place</th>' .
-                '<th class="smallth">Start date</th>' .
-                '<th class="smallth">Start time</th>' .
-                '<th class="smallth">End date</th>' .
-                '<th class="smallth">End time</th>' .
-                '<th class="smallth">Approved</th> </tr>';
+                '<th class="normalth">Place</th>' .
+                '<th>Start date</th>' .
+                '<th>Start time</th>' .
+                '<th>End date</th>' .
+                '<th>End time</th>' .
+                '<th>Approved</th> </tr>';
 
             while ($stmt->fetch()) {
                 if ($approved || (intval($starter) == intval($_SESSION['id']))) {
