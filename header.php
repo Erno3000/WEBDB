@@ -54,6 +54,7 @@
     <link rel="stylesheet" type="text/css" href="css/create_item.css" />
     <link rel="stylesheet" type="text/css" href="css/table_form.css" />
     <link rel="icon" type="image/x-icon" href="smile.ico" />
+    <link rel="stylesheet" type="text/css" href="css/account_settings.css" />
 </head>
 
 <body>

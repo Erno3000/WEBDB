@@ -67,7 +67,7 @@ if (!isset($_SESSION['loggedin'])) {
                 echo '<h2>Edit Account Information</h2>';
                 echo '<p>Edit only the fields which you would like to change</p>';
 
-                echo '<form action="account_settings.php" method="post">
+                echo '<form action="account_settings.php" method="post" id="accountsettingsform"> <fieldset>
                     <label for="currentpassword">Current password:</label>
                         <input type="password" class="css3text" name="currentpassword" id="currentpassword" /> <br />
                     <label for="newpassword">New password:</label>
@@ -77,7 +77,7 @@ if (!isset($_SESSION['loggedin'])) {
                     <label for="newemail">Email:</label>
                         <input type="email" class="css3text" name="newemail" id="newemail" value=' . $email . '> <br />
                     <input type="submit" value="Save changes" />
-                </form> <br />';
+                </fieldset> </form> <br />';
 
                 if ($_POST) {
                     $changed_something = false;
