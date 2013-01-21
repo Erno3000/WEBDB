@@ -32,7 +32,7 @@ if ($stmt = $mysqli->prepare($query)) {
         if ($stmt->store_result()) {
             $stmt->bind_result($a, $b, $b, $starter, $subject, $target_audience, $description, $start_date, $end_date,
                 $start_time, $end_time, $place, $approved);
-            echo '<table border="1" id="eventstable"> <tr>' .
+            echo '<table border="1" id="myevents"> <tr>' .
                 '<th>Subject</th>' .
                 '<th>Target audience</th>' .
                 '<th>Description</th>' .
