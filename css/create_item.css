@@ -1,0 +1,57 @@
+.center {
+    margin: auto;
+    width: 70%;
+    overflow: auto;
+}
+
+#ccform ul {
+    list-style: none;
+    padding: 3px 10px;
+}
+
+#ccform li {
+    padding: 3px 0px;
+}
+
+h1 {
+    font-size:110%;
+    margin-bottom:10px;
+}
+
+#target, #startdate, #enddate {
+    margin-left: 9em;
+}
+
+p.mandatory {
+    font-size: 80%;
+    padding-left: 10px;
+}
+
+p.maximum {
+	margin-left: 9em;
+}
+
+#ccform label {
+    font-weight: bold;
+    font-size: 105%;
+    width: 8em;
+    float: left;
+    text-align: left;
+    margin-right: 0.5em;
+    display: block;
+}
+
+fieldset {
+    width: 37em;
+    height: 33em;
+}
+
+.errorinput {
+    color: #A00;
+    background-color: #FDD;
+}
+
+.errormsg {
+    margin-left:5px;
+    color: #940000;
+}
