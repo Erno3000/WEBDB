@@ -2,6 +2,7 @@
 
 /* TODO!
 - check of checkbox minimaal 1 vinkje heeft (werkt nog niet!)
+- bij alle pagina's veranderen dat form naar PHP_SELF stuurt ipv url!
 */
 
 	$title = "Create event";
