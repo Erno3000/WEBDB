@@ -64,7 +64,7 @@
             
             <div id="logo">
                 <a href="">
-                    <img src="" />
+                    <img src="" alt="logo" />
                 </a>
             </div>
                       
