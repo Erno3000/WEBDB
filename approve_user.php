@@ -42,7 +42,7 @@
 							'<td>' . $email . '</td>';
 
                             if ($rank == -1) {
-                                echo '<td>Unactived User</td>';
+                                echo '<td>Unactivated User</td>';
                             }
 							
 							if ($rank == 0) {
