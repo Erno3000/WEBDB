@@ -62,6 +62,8 @@
                     header('Location: agenda.php');
                 }
             }
+
+            header('Location: agenda.php');
         }
     }
     /* We are now done with the login and the php script. */
