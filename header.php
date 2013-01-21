@@ -30,10 +30,10 @@
             }
 
             if ($_SESSION['rank'] < intval($rank)) {
-                header('Location: index.php');
+                header('Location: agenda.php');
             }
         } else {
-            header('Location: index.php');
+            header('Location: agenda.php');
         }
     }
 ?>

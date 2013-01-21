@@ -1,6 +1,7 @@
 <?php
 	$title = "Approve User";
-	include('header.php'); 
+	include('header.php');
+    requireRank("ADMIN");
 ?>
 <div id="content">
 	<h1>Select a user to edit or approve:</h1><br />
