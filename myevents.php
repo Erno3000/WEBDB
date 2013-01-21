@@ -37,11 +37,11 @@ if ($stmt = $mysqli->prepare($query)) {
                 '<th>Target audience</th>' .
                 '<th id="description">Description</th>' .
                 '<th>Place</th>' .
-                '<th class="smaller">Start date</th>' .
-                '<th class="smaller">Start time</th>' .
-                '<th class="smaller">End date</th>' .
-                '<th class="smaller">End time</th>' .
-                '<th class="smaller">Approved</th> </tr>';
+                '<th class="smallth">Start date</th>' .
+                '<th class="smallth">Start time</th>' .
+                '<th class="smallth">End date</th>' .
+                '<th class="smallth">End time</th>' .
+                '<th class="smallth">Approved</th> </tr>';
 
             while ($stmt->fetch()) {
                 if ($approved || (intval($starter) == intval($_SESSION['id']))) {
