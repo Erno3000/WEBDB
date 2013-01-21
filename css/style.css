@@ -112,24 +112,63 @@ body {
 	float: left;
 }
 
-.navigatie a:link,#navigatie a:visited,#navigatie a {
+.navigatie a:link {
 	display: inline-block;
 	font-weight:bold;
-	color:grey;
+	color: gray;
 	text-align:center;
 	padding: 7px 4px 11px 4px;
-	width: 140px;
+	width: 114px;
+	text-decoration:none;
+}
+
+.navigatie a {
+	display: inline-block;
+	font-weight:bold;
+	color: gray;
+	text-align:center;
+	padding: 7px 4px 11px 4px;
+	width: 114px;
+	text-decoration:none;
+}
+
+.navigatie a:visited {
+	display: inline-block;
+	font-weight:bold;
+	text-align:center;
+	padding: 7px 4px 11px 4px;
+	width: 114px;
+	color: #7000bf;
+	text-decoration:none;
+}
+
+.navigatie a:hover {
+	display: inline-block;
+    background-color: white;    
+    padding-bottom: 10px;
+    border-bottom: 1px solid #c8c8c8;
+	font-weight:bold;
+	text-align:center;
+	padding: 7px 4px 11px 4px;
+	width: 114px;
+	text-decoration:none;
+}
+
+.navigatie a:active {
+	color: red;
+	display: inline-block;
+    background-color: white;    
+    padding-bottom: 10px;
+    border-bottom: 1px solid #c8c8c8;
+	font-weight: bold;
+	text-align:center;
+	padding: 7px 4px 11px 4px;
+	width: 114px;
 	text-decoration:none;
 }
 
 .sep {
-	border-left: 1px solid #c8c8c8;
-}
-
-.navigatie a:hover,#navigatie a:active {
-	background-color: white;    
-	padding-bottom: 10px;
-	border-bottom: 1px solid #c8c8c8;
+    border-left: 1px solid #c8c8c8;
 }
 
 html, body, #container {
