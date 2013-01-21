@@ -2,7 +2,7 @@
 	$title = "Approve User";
 	include('header.php'); 
 ?>
-
+<div id="content">
 	<h1>Select a user to edit or approve:</h1><br />
 		
 	<?php
@@ -74,6 +74,5 @@
 		}
 		/* We are now done with the php script. */
 	?>
-		
-	
-	<?php include('footer.php'); ?>
+</div>
+<?php include('footer.php'); ?>

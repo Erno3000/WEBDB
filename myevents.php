@@ -8,7 +8,7 @@ const CUSTOMERS = 0x04;
 include('header.php');
 ?>
 
-<div id="myevents">
+<div id="content">
 <h1>Showing all of your events.</h1><br/>
 
 <?php
