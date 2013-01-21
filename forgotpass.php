@@ -2,7 +2,7 @@
     $title = "Forgot password";
   include('header.php');
 ?>
-<div id="forgotpw">
+<div id="content">
 	<h1>Please enter your email.</h1>
 	<p>An email with a new, temporary password will be sent to you.<br />
 	Don't forget to change it afterwards!</p>
