@@ -41,8 +41,9 @@ p.maximum {
     display: block;
 }
 
-fieldset {
-    width: 37em;
+#ccform fieldset {
+    border:1px solid;
+    width: 38em;
     height: 33em;
 }
 

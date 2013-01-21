@@ -4,17 +4,18 @@
     overflow: auto;
 }
 
-p.rule {
+p.mandatory {
     font-size: 80%;
+    padding-left: 10px;
 }
 
 #caform ul {
     list-style: none;
-    padding: 0px 0px;
+    padding: 3px 10px;
 }
 
 #caform li {
-    padding: 2px 0px;
+    padding: 3px 0px;
 }
 
 #caform input[type='text'], input[type='password'] {
@@ -23,18 +24,18 @@ p.rule {
 
 #caform label {
     font-weight: bold;
-    font-size: 100%;
-    width: 10em;
+    font-size: 105%;
+    width: 12em;
     float: left;
     text-align: left;
     margin-right: 0.5em;
     display: block;
 }
 
-fieldset {
-    border:1px solid #e2e2e2;
-    width: 400px;
-    height: 240px;
+#caform fieldset {
+    border:1px solid;
+    width: 34em;
+    height: 19em;
 }
 
 h1 {
