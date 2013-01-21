@@ -1,15 +1,15 @@
 <?php
     $title="Logging in...";
 	/* If no login was submitted, or the user is already logged in, return to the index page. */
-    if(!$_POST || $_SESSION['loggedin']) {
-        header('Location: index.php');
+    if(!$_POST || isset($_SESSION['loggedin'])) {
+        header('Location: agenda.php');
     }
 
     /* Set up a new connection to the database. */
     include('dbconnect.php');
 
     /* If the connection failed, bail out. */
-    if (!$mysqli) {
+    if (!$db) {
         die('Could not connect: ' . mysql_error());
     }
 
@@ -24,45 +24,43 @@
      */
     include('crypto.php');
 
-    if($stmt = $mysqli->prepare($query)) {
-        $stmt->bind_param('s', $_POST["username"]);
+    if($stmt = $db->prepare($query)) {
+        $stmt->bindValue(1, $_POST["username"], PDO::PARAM_STR);
 
         /* Then we execute the query. */
         if($stmt->execute()) {
             /* Check to see if it's a valid user. */
-            if($stmt->store_result() && $stmt->num_rows == 1) {
-                /* Bind the result to these variables and fetch
-                 * the result of the query.
-                 */
-                $stmt->bind_result($id, $user, $pass, $rank);
-                $stmt->fetch();
+            $n = $stmt->rowCount();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                /* And if the given password matches the one in the
-                 * database, it's a valid login.
-                 */
-                if (checkPassword($pass, $_POST["pwd"])) {
-                    /* Start the session, and initialise the Session variables with the correct values. */
-                    session_start();
-                    $_SESSION['id'] = $id;
-                    $_SESSION['loggedin'] = true;
-                    $_SESSION['username'] = $user;
-                    $_SESSION['rank'] = $rank;
-
-                    /* Sent the user back to the index page, as he logged in with a valid account. */
-                    header('Location: index.php');
-                } else {
-                    /* Apparantly it is not a valid password, since
-                     * it didn't match the one in the database.
+            foreach($results as $row) {
+                /* If there is 1 row in the result set, then the username is valid. */
+                if($n == 1) {
+                    /* And if the given password matches the one in the
+                     * database, it's a valid login.
                      */
-                    header('Location: index.php');
-                }
-            }
+                    if (checkPassword($row['password'], $_POST["pwd"])) {
+                        /* Start the session, and initialise the Session variables with the correct values. */
+                        session_start();
+                        $_SESSION['id'] = $row['user_id'];
+                        $_SESSION['loggedin'] = true;
+                        $_SESSION['username'] = $row['username'];
+                        $_SESSION['rank'] = $row['rank'];
 
-            else {
-                /* Apparantly it is not a valid user, because
-                 * there are no results.
-                 */
-                header('Location: index.php');
+                        /* Sent the user back to the agenda page, as he logged in with a valid account. */
+                        header('Location: agenda.php');
+                    } else {
+                        /* Apparantly it is not a valid password, since
+                         * it didn't match the one in the database.
+                         */
+                        header('Location: agenda.php');
+                    }
+                } else {
+                    /* Apparantly it is not a valid user, because
+                     * there are no results.
+                     */
+                    header('Location: agenda.php');
+                }
             }
         }
     }
