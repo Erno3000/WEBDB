@@ -40,3 +40,10 @@ td {
 	border-width: 1px;
 }
 	
+#myevents #description {
+	min-width: 400px;
+}
+
+#myevents .normalth {
+	min-width: 100px;
+}
