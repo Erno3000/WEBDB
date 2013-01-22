@@ -320,7 +320,7 @@
 	  echo '<div id="content">
                 <h1>Create event</h1>
 				<div id="ccform">
-	        			<form method="post" action="create_item_test.php">
+	        			<form method="post" action="create_item.php">
 						<fieldset>
             			<legend>Fill in this form to create a new event</legend>
 							<ul>';
