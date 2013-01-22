@@ -10,7 +10,7 @@
 	<p>An email with a new, temporary password will be sent to you.<br />
 	Don't forget to change it afterwards!</p>
 
-	<form id="forgotpwform" method=post action="forgotpass.php"> <fieldset class="normal">
+	<form id="forgotpwform" method="post" action="forgotpass.php"> <fieldset class="normal">
 		<input type="email" class="css3text" name="email" id="email"
 			placeholder="Please enter your email..." />
 		<input type="submit" class="css3button" id="submit" value="Reset password" />
