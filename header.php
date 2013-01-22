@@ -51,7 +51,7 @@
     <link rel="stylesheet" href="css/calendar.css" />
     <link rel="stylesheet" type="text/css" href="css/style.css" />
     <link rel="stylesheet" type="text/css" href="css/register.css" />
-    <link rel="stylesheet" type="text/css" href="css/create_item.css" />
+    <link rel="stylesheet" type="text/css" href="css/create_event.css" />
     <link rel="stylesheet" type="text/css" href="css/table_form.css" />
     <link rel="icon" type="image/x-icon" href="smile.ico" />
     <link rel="stylesheet" type="text/css" href="css/account_settings.css" />
@@ -121,7 +121,7 @@
                 <?php
                     if (isset($_SESSION['loggedin'])) {
                     	if ($_SESSION['rank'] >= 1) {
-		                    echo '<li class="sep"><a href="create_item.php">
+		                    echo '<li class="sep"><a href="create_event.php">
 		                    	Create event</a></li>';
 		               	}
 		               	

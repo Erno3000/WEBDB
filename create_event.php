@@ -32,7 +32,7 @@
 
         //Query to create an event, data is filled by binding variables, i.e. filling in in the places where a ? states
 		$queryRegister = "INSERT INTO Events (user_id, subject, target_audience, description, start_date, end_date, start_time, end_time, place, approved)
-		      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)";
+		      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         echo '0';
         //Only send the form when every field is entered.
 		if(isset($_POST['subject'])	&& isset($_POST['target'])
@@ -46,6 +46,7 @@
             echo '1';
 
             //Set the posted data (linked to names from the form) into variables.
+            $rank = $_SESSION['rank'];
             $user_id = $_SESSION['id'];
             $subject = strip_tags($_POST['subject']);
             $targetArray = $_POST['target'];
@@ -66,6 +67,8 @@
 			$end_date = $end_year . '-' . $end_month . '-' . $end_day;
             $start_time = $time1 . ':' . $time2 . ':' . $seconds;
             $end_time = $time3 . ':' . $time4 . ':' . $seconds;
+            $approved = 1;
+            $waiting = 0;
 
             echo '2';
 
@@ -107,6 +110,11 @@
                     $stmt->bindValue(7, $start_time, PDO::PARAM_STR);
                     $stmt->bindValue(8, $end_time, PDO::PARAM_STR);
                     $stmt->bindValue(9, $place, PDO::PARAM_STR);
+                    if($rank >= MODERATOR) {
+                        $stmt->bindValue(10, $approved, PDO::PARAM_INT);
+                    } else {
+                        $stmt->bindValue(10, $waiting, PDO::PARAM_INT);
+                    }
 					echo '4';
 					if(!$stmt->execute()) {
 	                    echo 'The form could not be submitted.'.$db->error;
@@ -320,7 +328,7 @@
 	  echo '<div id="content">
                 <h1>Create event</h1>
 				<div id="ccform">
-	        			<form method="post" action="create_item.php">
+	        			<form method="post" action="create_event.php">
 						<fieldset>
             			<legend>Fill in this form to create a new event</legend>
 							<ul>';
