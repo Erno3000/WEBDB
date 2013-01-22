@@ -50,9 +50,9 @@ function createYearCalview(Date $date) {
 function createMonthCalview(Date $date) {
     global $dbHost, $dbUser, $dbPass, $dbName, $queryCal, $request;
 
-    $startDate1 = $endDate1 = substr($date->copy()->previousMonth()->toString(), 0, 7) . '-__';
-    $startDate2 = $endDate2 = substr($date->toString(), 0, 7) . '-__';
-    $startDate3 = $endDate3 = substr($date->copy()->nextMonth()->toString(), 0, 7) . '-__';
+    $startDate1 = $endDate1 = substr($date->copy()->previousMonth()->toMYSQLString(), 0, 7) . '-__';
+    $startDate2 = $endDate2 = substr($date->toMYSQLString(), 0, 7) . '-__';
+    $startDate3 = $endDate3 = substr($date->copy()->nextMonth()->toMYSQLString(), 0, 7) . '-__';
 
     $events = array();
 

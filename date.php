@@ -37,8 +37,8 @@ class Date {
 
     const MIN_DAY = 1;
 
-    private $weekdays = array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
-    private $months = array('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September',
+    public static $weekdays = array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
+    public static $months = array('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September',
         'October', 'November', 'December');
     private $daysInMonth = array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
     private $daysInMonthLeap = array(31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
@@ -51,6 +51,7 @@ class Date {
 
     public function __construct($year, $month, $day = 1) {
         $this->date = new DateTime();
+        $this->date->setDate($year, $month, $day);
         $this->setDate($year, $month, $day);
     }
 
@@ -75,7 +76,7 @@ class Date {
     }
 
     private function update() {
-        $this->setDate($this->year, $this->month, $this->day);
+        $this->date->setDate($this->year, $this->month, $this->day);
     }
 
     public function setYear($year) {
@@ -139,9 +140,15 @@ class Date {
     }
 
     private function isValidDate() {
-        return $this->year >= MIN_YEAR && $this->year <= MAX_YEAR &&
+        if($this->year >= MIN_YEAR && $this->year <= MAX_YEAR &&
             $this->month >= MIN_MONTH && $this->month <= MAX_MONTH &&
-            $this->day >= MIN_DAY && $this->day <= $this->getDaysInMonth();
+            $this->day >= MIN_DAY && $this->day <= $this->getDaysInMonth()) {
+
+            $this->update();
+            return true;
+        }
+
+        return false;
     }
 
     public function nextDay() {
