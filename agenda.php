@@ -4,6 +4,7 @@ $title = "Calendar";
 include("header.php");
 include('config.php');
 include('calsearch.php');
+include('date.php');
 
 $queryCal = "SELECT subject, start_date, end_date, start_time, end_time FROM Events WHERE approved=1
                     AND ((start_date LIKE ? OR end_date LIKE ?) OR (start_date LIKE ? OR end_date LIKE ?)
@@ -13,21 +14,13 @@ const WEEK = 0;
 const MONTH = 1;
 const YEAR = 2;
 
-const MIN_YEAR = 0;
-const MAX_YEAR = 9999;
-const MIN_MONTH = 1;
-const MAX_MONTH = 12;
-const MIN_DAY = 1;
-const MAX_DAY = 31;
-
 const MONTHVIEW_ROWS = 6;
 const MONTHVIEW_COLS = 7;
 
 $calview = MONTH;
 
-$currYear = intval(date("Y"));
-$currMonth = intval(date("n"));
-$currDay = intval(date("j"));
+$today = new Date(intval(date("Y")), intval(date("n")), intval(date("j")));
+$caldate = $today;
 
 $request = $_GET;
 
@@ -38,95 +31,28 @@ if (isset($_GET['calview'])) {
     }
 }
 
-if(isset($_GET['y'])) {
-    $year = intval($_GET['y']);
-}
-if(isset($_GET['m'])) {
-    $month = intval($_GET['m']);
-}
-if(isset($_GET['d'])) {
-    $day = intval($_GET['d']);
-}
-
-if(isset($year) && isset($month) && isset($day) && validDate($year, $month, $day)) {
-    $request['y'] = intval($year);
-    $request['m'] = intval($month);
-    $request['d'] = intval($day);
-} else {
-    $request['y'] = $currYear;
-    $request['m'] = $currMonth;
-    $request['d'] = $currDay;
+if(isset($_GET['y']) && isset($_GET['m']) && isset($_GET['d'])) {
+    $caldate = new Date($_GET['y'], $_GET['m'], $_GET['d']);
 }
 
 if($calview == YEAR) {
-    createYearCalview($currYear, $currMonth, $currDay);
+    createYearCalview($caldate);
 } else if($calview == MONTH) {
-    createMonthCalview($currYear, $currMonth, $currDay);
+    createMonthCalview($caldate);
 } else {
-    createWeekCalview($currYear, $currMonth, $currDay);
+    createWeekCalview($caldate);
 }
 
-function validYear($year) {
-    return $year >= MIN_YEAR && $year <= MAX_YEAR;
-}
-
-function validMonth($month) {
-    return $month >= 1 && $month <= MAX_MONTH;
-}
-
-function validDay($day) {
-    return $day >= MIN_DAY && $day <= MAX_DAY;
-}
-
-function validDate($year, $month, $day) {
-    if(validYear($year) && validMonth($month) && validDay($day)) {
-        $daysOfMonth = date("t", mktime(0, 0, 0, $month, 1, $year));
-        return $day <= $daysOfMonth;
-    }
-}
-
-function prevMonth($month) {
-    if($month == 1) {
-        return 12;
-    }
-
-    return fixMonth($month - 1);
-}
-
-function nextMonth($month) {
-    if($month == 12) {
-        return fixMonth(1);
-    }
-
-    return fixMonth($month + 1);
-}
-
-function fixMonth($month) {
-    if($month <= 9) {
-        return '0' . $month;
-    }
-
-    return $month;
-}
-
-function createYearCalview($year, $month, $day) {
+function createYearCalview(Date $date) {
     //todo
 }
 
-function createMonthCalview($year, $month, $day) {
+function createMonthCalview(Date $date) {
     global $dbHost, $dbUser, $dbPass, $dbName, $queryCal, $request;
 
-    $nextMonth = nextMonth($month);
-    $prevMonth = prevMonth($month);
-    $year = intval($request['y']);
-    $nextYear = $year + 1;
-    $prevYear = $year - 1;
-
-    $month = fixMonth($month);
-
-    $startDate1 = $endDate1 = $year . '-' . $prevMonth . '-__';
-    $startDate2 = $endDate2 = $year . '-' . $month . '-__';
-    $startDate3 = $endDate3 = $year . '-' . $nextMonth . '-__';
+    $startDate1 = $endDate1 = substr($date->copy()->previousMonth()->toString(), 0, 7) . '-__';
+    $startDate2 = $endDate2 = substr($date->toString(), 0, 7) . '-__';
+    $startDate3 = $endDate3 = substr($date->copy()->nextMonth()->toString(), 0, 7) . '-__';
 
     $events = array();
 
@@ -195,10 +121,32 @@ function createMonthCalview($year, $month, $day) {
         <td>Sunday</td>
     </tr>';
 
+    $start = new DateTime();
+    $start->setDate($year, $request['m'], $request['d']);
+    $weekday = intval($start->format('w'));
+
+    if($weekday != 1) {
+        $start->setDate($year, $prevMonth, $request['d']);
+        $daysInMonth = intval($start->format('t'));
+        $diff = $weekday == 0 ? 0 : $weekday - 2;
+        $start->setDate($year, $prevMonth, $daysInMonth - $diff);
+    }
+
+    for($i = 0; $i < MONTHVIEW_COLS*MONTHVIEW_ROWS; $i++) {
+        if(intval($start->format('j')) > intval($start->format('w'))) {
+            $start->setDate($year, intval($month+1), 1);
+        }
+        $start->add(new DateInterval());
+        echo $start->format('F j');
+    }
+
+
+    
+
 
 }
 
-function createWeekCalview($year, $month, $day) {
+function createWeekCalview(Date $date) {
     //todo
 }
 
