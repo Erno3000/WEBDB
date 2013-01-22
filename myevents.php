@@ -6,6 +6,10 @@ const SHAREHOLDERS = 0x02;
 const CUSTOMERS = 0x04;
 
 include('header.php');
+
+if(!isset($_SESSION['loggedin'])) {
+    header('Location: agenda.php');
+}
 ?>
 
 <div id="content">
