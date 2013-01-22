@@ -6,11 +6,10 @@
     }
 
     /* Set up a new connection to the database. */
-    include('dbconnect.php');
-
-    /* If the connection failed, bail out. */
-    if (!$db) {
-        die('Could not connect: ' . mysql_error());
+    try {
+        include('dbconnect.php');
+    } catch(PDOException $ex) {
+        echo "Error while connecting to dB: ", $ex->getMessage();
     }
 
     /* Prepare the query. */
