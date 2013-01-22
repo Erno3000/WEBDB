@@ -3,6 +3,7 @@
 /* TODO!
 - check of checkbox minimaal 1 vinkje heeft (werkt nog niet!)
 - bij alle pagina's veranderen dat form naar PHP_SELF stuurt ipv url!
+- description, date, time en checkbox waarden laten onthouden!
 */
 
 	$title = "Create event";
@@ -33,7 +34,7 @@
         //Query to create an event, data is filled by binding variables, i.e. filling in in the places where a ? states
 		$queryRegister = "INSERT INTO Events (user_id, subject, target_audience, description, start_date, end_date, start_time, end_time, place, approved)
 		      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        echo '0';
+
         //Only send the form when every field is entered.
 		if(isset($_POST['subject'])	&& isset($_POST['target'])
             && isset($_POST['description']) && isset($_POST['start_month'])
@@ -42,8 +43,6 @@
             && isset($_POST['end_year']) && isset($_POST['time1'])
             && isset($_POST['time2']) && isset($_POST['time3'])
             && isset($_POST['time4']) && isset($_POST['place'])) {
-
-            echo '1';
 
             //Set the posted data (linked to names from the form) into variables.
             $rank = $_SESSION['rank'];
@@ -70,8 +69,6 @@
             $approved = 1;
             $waiting = 0;
 
-            echo '2';
-
             $target = 0;
             if(in_array('employees', $targetArray)) {
                 $target |= EMPLOYEES;
@@ -85,8 +82,6 @@
             if(!isset($_POST['target'])) {
                 error($targetError, "Check at least one box");
             }
-
-            echo '3';
 
             //Check the length and validity of the posted data
 			requireLength($subject, 1, 50, $subjectError);
@@ -115,7 +110,7 @@
                     } else {
                         $stmt->bindValue(10, $waiting, PDO::PARAM_INT);
                     }
-					echo '4';
+
 					if(!$stmt->execute()) {
 	                    echo 'The form could not be submitted.'.$db->errorInfo();
 	                } else {
@@ -126,7 +121,7 @@
 				}
 			}
 		} else {
-            echo '5';
+            //hier moet de foutafhandeling van checkbox komen! of zoiets
         }
 	}
 
