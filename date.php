@@ -37,8 +37,8 @@ class Date {
 
     const MIN_DAY = 1;
 
-    public static $weekdays = array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
-    public static $months = array('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September',
+    public $weekdays = array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
+    public $months = array('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September',
         'October', 'November', 'December');
     private $daysInMonth = array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
     private $daysInMonthLeap = array(31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
@@ -51,7 +51,6 @@ class Date {
 
     public function __construct($year, $month, $day = 1) {
         $this->date = new DateTime();
-        $this->date->setDate($year, $month, $day);
         $this->setDate($year, $month, $day);
     }
 
@@ -64,7 +63,7 @@ class Date {
         $month = intval($month);
         $day = intval($day);
 
-        if($this->isValidDate()) {
+        if($this->isValidDate($year, $month, $day)) {
             $this->year = $year;
             $this->month = $month;
             $this->day = $day;
@@ -82,6 +81,7 @@ class Date {
     public function setYear($year) {
         if($this->isValidDate($year, $this->month, $this->day)) {
             $this->year = $year;
+            $this->update();
             return true;
         }
 
@@ -91,6 +91,7 @@ class Date {
     public function setMonth($month) {
         if($this->isValidDate($this->year, $month, $this->day)) {
             $this->month = $month;
+            $this->update();
             return true;
         }
 
@@ -100,6 +101,7 @@ class Date {
     public function setDay($day) {
         if($this->isValidDate($this->year, $this->month, $day)) {
             $this->day = $day;
+            $this->update();
             return true;
         }
 
@@ -122,8 +124,11 @@ class Date {
         return $this->day;
     }
 
-    public function isLeapYear() {
-        return intval($this->date->format('L')) == 1;
+    public function isLeapYear($year) {
+        $date = new DateTime();
+        $date->setDate($year, 1, 1);
+
+        return $date->format('L') == 1;
     }
 
     public function getWeekDay() {
@@ -134,15 +139,15 @@ class Date {
         return $this->months[$this->month - 1];
     }
 
-    public function getDaysInMonth() {
-        return $this->isLeapYear() ?
-            $this->daysInMonth[$this->month - 1] : $this->daysInMonthLeap[$this->month - 1];
+    public function getDaysInMonth($year, $month) {
+        return $this->isLeapYear($year) ?
+            $this->daysInMonthLeap[$month - 1] : $this->daysInMonth[$month - 1];
     }
 
-    private function isValidDate() {
-        if($this->year >= MIN_YEAR && $this->year <= MAX_YEAR &&
-            $this->month >= MIN_MONTH && $this->month <= MAX_MONTH &&
-            $this->day >= MIN_DAY && $this->day <= $this->getDaysInMonth()) {
+    private function isValidDate($year, $month, $day) {
+        if($year >= self::MIN_YEAR && $year <= self::MAX_YEAR &&
+            $month >= self::MIN_MONTH && $month <= self::MAX_MONTH &&
+            $day >= self::MIN_DAY && $day <= $this->getDaysInMonth($year, $month)) {
 
             $this->update();
             return true;
@@ -152,9 +157,9 @@ class Date {
     }
 
     public function nextDay() {
-        if($this->day == $this->getDaysInMonth()) {
+        if($this->day == $this->getDaysInMonth($this->year, $this->month)) {
             $this->setDay(1);
-            $this->addMonth();
+            $this->nextMonth();
         } else {
             $this->setDay($this->day + 1);
         }
@@ -164,8 +169,8 @@ class Date {
     }
 
     public function nextMonth() {
-        if($this->month == MAX_MONTH) {
-            $this->setMonth(MIN_MONTH);
+        if($this->month == self::MAX_MONTH) {
+            $this->setMonth(self::MIN_MONTH);
             $this->setYear($this->year + 1);
         } else {
             $this->setMonth($this->month + 1);
@@ -176,7 +181,7 @@ class Date {
     }
 
     public function nextYear() {
-        if($this->year < MAX_YEAR) {
+        if($this->year < self::MAX_YEAR) {
             $this->setYear($this->year + 1);
         }
 
@@ -185,9 +190,9 @@ class Date {
     }
 
     public function previousDay() {
-        if($this->day == MIN_DAY) {
+        if($this->day == self::MIN_DAY) {
             $this->previousMonth();
-            $this->setDay($this->getDaysInMonth());
+            $this->setDay($this->getDaysInMonth($this->year, $this->month));
         } else {
             $this->setDay($this->day - 1);
         }
@@ -197,8 +202,8 @@ class Date {
     }
 
     public function previousMonth() {
-        if($this->month == MIN_MONTH) {
-            $this->setMonth(MAX_MONTH);
+        if($this->month == self::MIN_MONTH) {
+            $this->setMonth(self::MAX_MONTH);
             $this->setYear($this->year - 1);
         } else {
             $this->setMonth($this->month - 1);
@@ -209,11 +214,8 @@ class Date {
     }
 
     public function previousYear() {
-        if($this->day == MIN_DAY) {
-            $this->previousMonth();
-            $this->setDay($this->getDaysInMonth());
-        } else {
-            $this->setDay($this->day - 1);
+        if(!$this->day == self::MIN_YEAR) {
+            $this->setYear($this->getYear() - 1);
         }
 
         $this->update();
@@ -230,11 +232,15 @@ class Date {
         if($number < 10) {
             return '0' . $number;
         }
-        return $this;
+        return $number;
     }
 
     public function toMYSQLString() {
         return $this->year . '-' . $this->fixNumber($this->month) . '-' . $this->fixNumber($this->day);
+    }
+
+    public function format($format) {
+        return $this->date->format($format);
     }
 
 }

@@ -22,6 +22,8 @@
                 $page .= '&' . $k . '=' . $v;
             }
         }
+
+        return $page;
     }
 
     function followEvent($userId, $eventId) {

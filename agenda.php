@@ -20,7 +20,7 @@ const MONTHVIEW_COLS = 7;
 $calview = MONTH;
 
 $today = new Date(intval(date("Y")), intval(date("n")), intval(date("j")));
-$caldate = $today;
+$caldate = $today->copy();
 
 $request = $_GET;
 
@@ -81,18 +81,12 @@ function createMonthCalview(Date $date) {
         echo 'Er zit een fout in de query: ' . $mysqli->error;
     }
 
-    $request["m"] = $prevMonth;
-    $prevMonthUrl = urlFromArray('agenda.php', $request);
-    $request["m"] = $nextMonth;
-    $nextMonthUrl = urlFromArray('agenda.php', $request);
-    $monthName = date("F", mktime(0, 0, 0, intval($request['m']), 1, 2000));
-    echo 'intval request m = ' . intval($request['m']);
-    $request["m"] = $month;
-    $request["y"] = $prevYear;
-    $prevYearUrl = urlFromArray('agenda.php', $request);
-    $request["y"] = $nextYear;
-    $nextYearUrl = urlFromArray('agenda.php', $request);
-
+    $prevMonthUrl = createUrlFromArray($date->copy()->previousMonth(), $request);
+    $nextMonthUrl = createUrlFromArray($date->copy()->nextMonth(), $request);
+    $prevYearUrl = createUrlFromArray($date->copy()->previousYear(), $request);
+    $nextYearUrl = createUrlFromArray($date->copy()->nextYear(), $request);
+    $monthName = $date->getMonthName();
+    $year = $date->getYear();
 
     echo '<table id="calendar">
     <caption>
@@ -121,29 +115,55 @@ function createMonthCalview(Date $date) {
         <td>Sunday</td>
     </tr>';
 
-    $start = new DateTime();
-    $start->setDate($year, $request['m'], $request['d']);
-    $weekday = intval($start->format('w'));
+    $today = $date->copy();
+    $todayCopy = new Date(intval(date("Y")), intval(date("n")), intval(date("j")));
+    $today->setDay(1);
+    $weekday = $today->getWeekDay();
 
-    if($weekday != 1) {
-        $start->setDate($year, $prevMonth, $request['d']);
-        $daysInMonth = intval($start->format('t'));
+    if($weekday != Date::MONDAY) {
+        $date->previousMonth();
         $diff = $weekday == 0 ? 0 : $weekday - 2;
-        $start->setDate($year, $prevMonth, $daysInMonth - $diff);
+        $date->setDay($date->getDaysInMonth($date->getYear(), $date->getMonth()) - $diff);
     }
 
-    for($i = 0; $i < MONTHVIEW_COLS*MONTHVIEW_ROWS; $i++) {
-        if(intval($start->format('j')) > intval($start->format('w'))) {
-            $start->setDate($year, intval($month+1), 1);
+    for($i = 0; $i < MONTHVIEW_ROWS; $i++) {
+        $eventsById = array();
+
+        echo '<tr class="days">';
+        for($j = 0; $j < MONTHVIEW_COLS; $j++) {
+            if($date->equals($todayCopy)) {
+                echo '<td class="selected">' . $date->format('F j') . '</td>';
+            } else {
+                echo '<td>' . $date->format('F j') . '</td>';
+            }
+            if(isset($events[$date->toMYSQLString()])) {
+
+                $eventsById[$j] = $events[$date->toMYSQLString()];
+            }
+            $date->nextDay();
         }
-        $start->add(new DateInterval());
-        echo $start->format('F j');
+        echo '</tr>';
+
+        echo '<tr class="events">';
+        for($j = 0; $j < MONTHVIEW_COLS; $j++) {
+            if(isset($eventsById[$j])) {
+                echo '<td>' . $eventsById[$j] . '</td>';
+            } else {
+                echo '<td>' . '</td>';
+            }
+        }
+        echo '</tr>';
     }
 
 
-    
+}
 
+function createUrlFromArray(Date $date, &$request) {
+    $request['y'] = $date->getYear();
+    $request['m'] = $date->fixNumber($date->getMonth());
+    $request['d'] = $date->fixNumber($date->getDay());
 
+    return urlFromArray('agenda.php', $request);
 }
 
 function createWeekCalview(Date $date) {
@@ -151,183 +171,6 @@ function createWeekCalview(Date $date) {
 }
 
 ?>
-
-
-<div id="calviews">
-<div id="calview_tabs">
-    <a href="agenda.php?calview=0" onclick="javascript:return false;">Week</a>
-    <a href="agenda.php?calview=1" onclick="javascript:return false;">Month</a>
-    <a href="agenda.php?calview=2" onclick="javascript:return false;">Year</a>
-</div>
-
-<div id="calview_opts">
-    <div id="calview_opt0">
-            <span id="calview_opt0_week">
-                <a href="javascript:calendar.prevWeek()"><img src="img/previous_entry.png" alt="previous week"
-                                                              height="12px" /></a>
-                <span id="week">7 - 13. January 2013</span>
-                <a href="javascript:calendar.nextWeek()"><img src="img/next_entry.png" alt="next month"
-                                                              height="12px" /></a>
-            </span>
-    </div>
-    <div id="calview_opt1">
-            <span id="calview_opt1_month">
-                <a href="javascript:calendar.prevMonth()"><img src="img/previous_entry.png" alt="previous month"
-                                                               height="12px" /></a>
-                <span id="month">April</span>
-                <a href="javascript:calendar.nextMonth()"><img src="img/next_entry.png" alt="next month" height="12px" /></a>
-            </span>
-
-            <span id="calview_opt1_year">
-                <a href="javascript:calendar.prevYear()"><img src="img/previous_entry.png" alt="previous year"
-                                                              height="12px" /></a>
-                <span id="year">2011</span>
-                <a href="javascript:calendar.nextYear()"><img src="img/next_entry.png" alt="next year"
-                                                              height="12px" /></a>
-            </span>
-    </div>
-    <div id="calview_opt2">
-            <span id="calview_opt2_year">
-                <a href="javascript:calendar.prevYear()"><img src="img/previous_entry.png" alt="previous year"
-                                                              height="12px" /></a>
-                <span id="year">2013</span>
-                <a href="javascript:calendar.nexYear()"><img src="img/next_entry.png" alt="next year" height="12px" /></a>
-            </span>
-    </div>
-
-</div>
-
-<div id="calview_0">
-
-</div>
-<div id="calview_1">
-
-</div>
-<div id="calview_2">
-
-</div>
-
-
-
-    <tr class="days">
-        <td>28 March</td>
-        <td>28 March</td>
-        <td>28 March</td>
-        <td>28 March</td>
-        <td>28 March</td>
-        <td>28 March</td>
-        <td>28 March</td>
-    </tr>
-
-    <tr class="events">
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-
-    <tr class="days">
-        <td>28 March</td>
-        <td>28 March</td>
-        <td>28 March</td>
-        <td>28 March</td>
-        <td>28 March</td>
-        <td>28 March</td>
-        <td>28 March</td>
-    </tr>
-
-    <tr class="events">
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-
-    <tr class="days">
-        <td>28 March</td>
-        <td>28 March</td>
-        <td>28 March</td>
-        <td>28 March</td>
-        <td>28 March</td>
-        <td>28 March</td>
-        <td>28 March</td>
-    </tr>
-
-    <tr class="events">
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-
-    <tr class="days">
-        <td>28 March</td>
-        <td>28 March</td>
-        <td>28 March</td>
-        <td>28 March</td>
-        <td>28 March</td>
-        <td>28 March</td>
-        <td>28 March</td>
-    </tr>
-
-    <tr class="events">
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-
-    <tr class="days">
-        <td>28 March</td>
-        <td>28 March</td>
-        <td>28 March</td>
-        <td>28 March</td>
-        <td>28 March</td>
-        <td>28 March</td>
-        <td>28 March</td>
-    </tr>
-
-    <tr class="events">
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
-
-    <tr class="days">
-        <td>28 March</td>
-        <td>28 March</td>
-        <td>28 March</td>
-        <td>28 March</td>
-        <td>28 March</td>
-        <td>28 March</td>
-        <td>28 March</td>
-    </tr>
-
-    <tr class="events">
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
 
 </table>
 
