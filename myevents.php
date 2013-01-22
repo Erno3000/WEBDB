@@ -16,7 +16,7 @@ include('header.php');
 include('dbconnect.php');
 
 /* If the connection failed, bail out. */
-if (!$mysqli) {
+if (!$db) {
     die('Could not connect: ' . mysql_error());
 }
 
@@ -24,78 +24,79 @@ if (!$mysqli) {
 $query = 'SELECT * FROM Following JOIN Events ON Following.event_id=Events.event_id WHERE Following.user_id=?';
 
 /* First we prepare the query for execution. */
-if ($stmt = $mysqli->prepare($query)) {
-    $stmt->bind_param('i', $_SESSION['id']);
+if ($stmt = $db->prepare($query)) {
+    $stmt->bindValue(1, $_SESSION['id'], PDO::PARAM_INT);
     /* Then we execute the query. */
     if ($stmt->execute()) {
         /* And output it in an HTML table. */
-        if ($stmt->store_result()) {
-            $stmt->bind_result($a, $b, $b, $starter, $subject, $target_audience, $description, $start_date, $end_date,
-                $start_time, $end_time, $place, $approved);
-            echo '<table border="1" id="myevents"> <tr>' .
-                '<th class="normalth">Subject</th>' .
-                '<th class="normalth">Target audience</th>' .
-                '<th id="description">Description</th>' .
-                '<th class="normalth">Place</th>' .
-                '<th>Start date</th>' .
-                '<th>Start time</th>' .
-                '<th>End date</th>' .
-                '<th>End time</th>' .
-                '<th>Approved</th> </tr>';
+        //$stmt->bind_result($a, $b, $b, $starter, $subject, $target_audience, $description, $start_date, $end_date,
+        //    $start_time, $end_time, $place, $approved);
+        $n = $stmt->rowCount();
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            while ($stmt->fetch()) {
-                if ($approved || (intval($starter) == intval($_SESSION['id']))) {
-                    echo '<tr> <td>' . $subject . '</td>';
+        echo '<table border="1" id="myevents"> <tr>' .
+            '<th class="normalth">Subject</th>' .
+            '<th class="normalth">Target audience</th>' .
+            '<th id="description">Description</th>' .
+            '<th class="normalth">Place</th>' .
+            '<th>Start date</th>' .
+            '<th>Start time</th>' .
+            '<th>End date</th>' .
+            '<th>End time</th>' .
+            '<th>Approved</th> </tr>';
 
-                    $first = true;
-                    $audience = '';
-                    $target_audience = intval($target_audience);
+        foreach($results as $row) {
+            if ($row['approved'] || (intval($row['user_id']) == intval($_SESSION['id']))) {
+                echo '<tr> <td>' . $row['subject'] . '</td>';
 
-                    if($target_audience & EMPLOYEES) {
-                        /* Employees is onderdeel van de target audience */
-                        $first = false;
-                        $audience = 'Employees';
-                    }
+                $first = true;
+                $audience = '';
+                $target_audience = intval($row['target_audience']);
 
-                    if($target_audience & SHAREHOLDERS) {
-                        if ($first) {
-                            $audience = 'Shareholders';
-                            $first = false;
-                        } else {
-                            $audience .= ', Shareholders';
-                        }
-                    }
-
-                    if($target_audience & CUSTOMERS) {
-                        if ($first) {
-                            $audience = 'Customers';
-                        } else {
-                            $audience .= ', Customers';
-                        }
-                    }
-
-                    echo '<td>' . $audience . '</td>' .
-                    '<td>' . $description . '</td>' .
-                    '<td>' . $place . '</td>' .
-                    '<td>' . $start_date . '</td>' .
-                    '<td>' . $start_time . '</td>' .
-                    '<td>' . $end_date . '</td>' .
-                    '<td>' . $end_time . '</td>';
-
-                    if($approved) {
-                        echo '<td>Yes</td>';
-                    } else {
-                        if ($starter == $_SESSION['id']) {
-                            echo '<td>No</td>';
-                        }
-                    }
-
-                echo '</tr>';
+                if($target_audience & EMPLOYEES) {
+                    /* Employees is onderdeel van de target audience */
+                    $first = false;
+                    $audience = 'Employees';
                 }
-            }
 
-            echo '</table>';
+                if($target_audience & SHAREHOLDERS) {
+                    if ($first) {
+                        $audience = 'Shareholders';
+                        $first = false;
+                    } else {
+                        $audience .= ', Shareholders';
+                    }
+                }
+
+                if($target_audience & CUSTOMERS) {
+                    if ($first) {
+                        $audience = 'Customers';
+                    } else {
+                        $audience .= ', Customers';
+                    }
+                }
+
+                echo '<td>' . $audience . '</td>' .
+                '<td>' . $row['description'] . '</td>' .
+                '<td>' . $row['place'] . '</td>' .
+                '<td>' . $row['start_date'] . '</td>' .
+                '<td>' . $row['start_time'] . '</td>' .
+                '<td>' . $row['end_date'] . '</td>' .
+                '<td>' . $row['end_time'] . '</td>';
+
+                if($row['approved']) {
+                    echo '<td>Yes</td>';
+                } else {
+                    if ($row['user_id'] == $_SESSION['id']) {
+                        echo '<td>No</td>';
+                    }
+                }
+
+            echo '</tr>';
+            }
         }
+
+        echo '</table>';
     }
 }
 ?>

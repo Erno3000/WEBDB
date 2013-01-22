@@ -9,11 +9,12 @@
 	<h1>Please enter your email.</h1>
 	<p>An email with a new, temporary password will be sent to you.<br />
 	Don't forget to change it afterwards!</p>
-	<form id="forgotpwform" method=post action="forgotpass.php">
-		<input type="text" class="css3text" name="email" id="email" 
-			placeholder="Enter your email here..." />
+
+	<form id="forgotpwform" method=post action="forgotpass.php"> <fieldset class="normal">
+		<input type="email" class="css3text" name="email" id="email"
+			placeholder="Please enter your email..." />
 		<input type="submit" class="css3button" id="submit" value="Reset password" />
-	</form>
+	</fieldset> </form>
 	
 	<?php
 		if ($_POST) {
@@ -21,7 +22,7 @@
 			include('dbconnect.php');
 			    			
 			/* If the connection failed, bail out. */
-			if (!$mysqli) {
+			if (!$db) {
 				die('Could not connect: ' . mysql_error());
 			}
 			
@@ -31,21 +32,18 @@
 			/* First we prepare the query by replacing the question marks
     		 * in the query with the variables with the actual values.
     		 */
-    		if($stmt = $mysqli->prepare($query)) {
-				$stmt->bind_param('s', $_POST["email"]);
+    		if($stmt = $db->prepare($query)) {
+				$stmt->bindValue(1, $_POST["email"], PDO::PARAM_STR);
 				
 				/* Then we execute the query. */
 				if($stmt->execute()) {
 					/* Check to see if it's a valid user. */
-					if($stmt->store_result() && $stmt->num_rows == 1) {
-						/* Bind the result to these variables and fetch
-						 * the result of the query.
-						 */
-						$stmt->bind_result($id, $user, $email);
-						$stmt->fetch();
+					if($stmt->rowCount() == 1) {
+						/* Fetch the result of the query. */
+						$row = $stmt->fetch(PDO::FETCH_ASSOC);
 						
-						echo 'Resetting username "' . $user . '"... <br />';
-						echo 'Please check your email (' . $email . ')';
+						echo 'Resetting username "' . $row['username'] . '"... <br />';
+						echo 'Please check your email (' . $row['email'] . ')';
 					} else {
 						echo 'Invalid email! Are you sure you typed it correctly?';
 					}

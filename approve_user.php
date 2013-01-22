@@ -11,7 +11,7 @@
 		include('dbconnect.php');
 		    			
 		/* If the connection failed, bail out. */
-		if (!$mysqli) {
+		if (!$db) {
 			die('Could not connect: ' . mysql_error());
 		}
 		
@@ -20,57 +20,54 @@
 			ORDER BY user_id';
 		
 		/* First we prepare the query for execution. */
-		if($stmt = $mysqli->prepare($query)) {
+		if($stmt = $db->prepare($query)) {
 			/* Then we execute the query. */
 			if($stmt->execute()) {
 				/* And output it in an HTML table. */
-				if ($stmt->store_result()) {
-					$stmt->bind_result($id, $user, $fname, $lname, $email, $rank);
-					echo '<table border="1" id="userstable"> <tr>' .
-						'<th>ID</th>' .
-						'<th>Username</th>' .
-						'<th>First name</th>' .
-						'<th>Last name</th>' .
-						'<th>Email</th>' .
-						'<th>Rank</th> </tr>';
-										
-					while ($stmt->fetch()) {
-						echo '<tr>' .
-							'<td>' . $id . '</td>' .
-							'<td>' . $user . '</td>' .
-							'<td>' . $fname . '</td>' .
-							'<td>' . $lname . '</td>' .
-							'<td>' . $email . '</td>';
+                $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                            if ($rank == -1) {
-                                echo '<td>Unactivated User</td>';
-                            }
-							
-							if ($rank == 0) {
-								echo '<td>User</td>';
-							}
-							
-							if ($rank == 1) {
-								echo '<td>Author</td>';
-							}
-							
-							if ($rank == 2) {
-								echo '<td>Moderator</td>';
-							}
-							
-							if ($rank == 3) {
-								echo '<td>Admin</td>';
-							}
-							
-							if ($rank < -1 or $rank > 3) {
-								echo '<td>Hacker</td>';
-							}
-								
-							echo '</tr>';
-					}
-					
-					echo '</table>';
-				}
+                echo '<table border="1" id="userstable"> <tr>' .
+                    '<th>Username</th>' .
+                    '<th>First name</th>' .
+                    '<th>Last name</th>' .
+                    '<th>Email</th>' .
+                    '<th>Rank</th> </tr>';
+
+                foreach($results as $row) {
+                    echo '<tr>' .
+                        '<td>' . $row['username'] . '</td>' .
+                        '<td>' . $row['first_name'] . '</td>' .
+                        '<td>' . $row['last_name'] . '</td>' .
+                        '<td>' . $row['email'] . '</td>';
+
+                        if ($row['rank'] == -1) {
+                            echo '<td>Unactivated User</td>';
+                        }
+
+                        if ($row['rank'] == 0) {
+                            echo '<td>User</td>';
+                        }
+
+                        if ($row['rank'] == 1) {
+                            echo '<td>Author</td>';
+                        }
+
+                        if ($row['rank'] == 2) {
+                            echo '<td>Moderator</td>';
+                        }
+
+                        if ($row['rank'] == 3) {
+                            echo '<td>Admin</td>';
+                        }
+
+                        if ($row['rank'] < -1 or $row['rank'] > 3) {
+                            echo '<td>Hacker</td>';
+                        }
+
+                        echo '</tr>';
+                }
+
+                echo '</table>';
 			}
 		}
 		/* We are now done with the php script. */
