@@ -117,15 +117,12 @@
                     }
 					echo '4';
 					if(!$stmt->execute()) {
-	                    echo 'The form could not be submitted.'.$db->error;
+	                    echo 'The form could not be submitted.'.$db->errorInfo();
 	                } else {
 						echo 'Submitted.';
 	                }
-
-					$stmt->close();
-
 				} else {
-					echo 'There is an error in the query: '.$db->error;
+					echo 'There is an error in the query: '.$db->errorInfo();
 				}
 			}
 		} else {
@@ -134,7 +131,7 @@
 	}
 
 	if(!$db) {
-        trigger_error('Error when connecting: '.$db->error);
+        trigger_error('Error when connecting: '.$db->errorInfo());
     }
 
 	function error(&$errorVar, $msg) {
