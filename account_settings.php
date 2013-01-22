@@ -65,7 +65,7 @@ if (!isset($_SESSION['loggedin'])) {
 
             echo '<h1>Edit Account Information</h1>';
 
-            echo '<form action="account_settings.php" method="post" id="accountsettingsform"> <fieldset>
+            echo '<form action="'. "{$_SERVER['PHP_SELF']}" . '" method="post" id="accountsettingsform"> <fieldset>
             <legend>Edit only the fields which you would like to change</legend> <ul>
                 <li> <label for="currentpassword">Current password:</label>
                     <input type="password" class="css3text" name="currentpassword" id="currentpassword" /> <br /> </li>
@@ -134,9 +134,30 @@ if (!isset($_SESSION['loggedin'])) {
                 echo '12, ';
 
                 if (!$changed_something) {
-                    echo '<p>Nothing has changed, so there is nothing to save!</p>';
+                    echo '<p>Nothing has (successfully) changed, so there is nothing to save!</p>';
                 }
                 echo '13.';
+            }
+
+            echo '<br /> <br /> <h1>Delete my account</h1>';
+            echo '<p><strong>WARNING: This will completely delete your account from our server. This cannot be undone!</strong></p>';
+            echo '<form action="'. "{$_SERVER['PHP_SELF']}" . '" method="post" id="deleteaccountform"> <fieldset class="normal">';
+            echo '
+            <ul>
+                <li> <label for="deleteaccount"></label>
+                    <input type="radio" name="choice" value="yes">Yes, I want to delete my account. <br />
+                    <input type="radio" name="choice" value="no">No, I don' . "'" . 't want to delete my account.<br /> </li>
+                <li> <input type="submit" value="Submit" /> </li>
+            </ul> </fieldset> </form>';
+
+            if ($_POST && isset($_POST['choice'])) {
+                echo '<br />';
+                
+                if ($_POST['choice'] == 'yes') {
+                    echo '<p>Your account is now succesfully deleted</p>';
+                } else {
+                    echo '<p>Your account has not been touched</p>';
+                }
             }
         }
     }
