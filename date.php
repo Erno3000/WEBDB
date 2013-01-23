@@ -5,6 +5,9 @@
 
     Makes sure dates are actually valid...
 
+    todo
+        - call update function when needed.
+
 */
 class Date {
 

@@ -65,7 +65,6 @@ function createMonthCalview(Date $date) {
 
             //todo remove
             $numResults = $stmt->num_rows;
-            echo 'Found ' . $numResults . 'events';
 
             while ($stmt->fetch()) {
                 if(!isset($events[$rStartDate])) {
@@ -115,23 +114,32 @@ function createMonthCalview(Date $date) {
         <td>Sunday</td>
     </tr>';
 
-    $today = $date->copy();
-    $todayCopy = new Date(intval(date("Y")), intval(date("n")), intval(date("j")));
-    $today->setDay(1);
-    $weekday = $today->getWeekDay();
+    $dateCopy = $date->copy();
+    $today = new Date(intval(date("Y")), intval(date("n")), intval(date("j")));
+    $dateCopy->setDay(1);
+    $weekday = $dateCopy->getWeekDay();
 
-    if($weekday != Date::MONDAY) {
-        $date->previousMonth();
-        $diff = $weekday == 0 ? 0 : $weekday - 2;
-        $date->setDay($date->getDaysInMonth($date->getYear(), $date->getMonth()) - $diff);
+    /* Current weekday numbers are from Sunday (day 0) to Saturday (day 6)
+       Desired weekday numbers are from Tuesday (day 1) to Monday (day 7) to display the last $number
+        amount of days from the previous month
+    */
+    if($weekday >= Date::TUESDAY && $weekday <= Date::SATURDAY) {
+        $weekday = $weekday - 2;
+    } else if($weekday == Date::MONDAY) {
+        $weekday = 6;
+    } else {
+        $weekday = 5;
     }
+
+    $date->previousMonth();
+    $date->setDay($date->getDaysInMonth($date->getYear(), $date->getMonth()) - $weekday);
 
     for($i = 0; $i < MONTHVIEW_ROWS; $i++) {
         $eventsById = array();
 
         echo '<tr class="days">';
         for($j = 0; $j < MONTHVIEW_COLS; $j++) {
-            if($date->equals($todayCopy)) {
+            if($date->equals($today)) {
                 echo '<td class="selected">' . $date->format('F j') . '</td>';
             } else {
                 echo '<td>' . $date->format('F j') . '</td>';
