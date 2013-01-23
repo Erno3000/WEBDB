@@ -15,7 +15,7 @@
         echo "Error while connecting to dB: ", $ex->getMessage();
     }
 
-    requireRank("AUTHOR");
+    //requireRank("AUTHOR");
 
     const EMPLOYEES = 0x01;
     const SHAREHOLDERS = 0x02;
@@ -166,7 +166,7 @@
             print '*';
         }
         print '</label>';
-        print '<input type="' . $type . '" id="' . $id . '" name="' . $id . '" size="' . $size . '"';
+        print '<input type="' . $type . '" id="' . $id . '" name="' . $id . '" class="css3text" size="' . $size . '"';
         if(isset($prevVal)) {
             print ' value="' . strip_tags($prevVal) . '"';
         }
@@ -189,7 +189,7 @@
         }
         print '</label>';
         print '<textarea cols="' . $cols . '" rows="' . $rows . '
-        " id="' . $id . '" name="' . $id . '"';
+        " id="' . $id . '" name="' . $id . '" class="css3text"';
         if(isset($prevVal)) {
             print ' value="' . strip_tags($prevVal) . '"';
         }
@@ -238,7 +238,7 @@
 		global $currentYear;
 		global $currentMonth;
 		global $currentDay;
-		$dateformat1 = '<option value="%1$02d" selected>%1$02d</option>';
+		$dateformat1 = '<option value="%1$02d" selected="selected">%1$02d</option>';
 		$dateformat2 = '<option value="%1$02d">%1$02d</option>';
     	
 		print '<li><label for="' . $id . '">' . $label . ':';
@@ -252,7 +252,7 @@
 		for ($i = 1; $i <= 12; $i++) {
 			$j = date("F", mktime(0, 0, 0, $i, 1, 2000));
 			if($j == $currentMonth) {
-				print '<option value="' . $i . '" selected>' . $j . '</option>';
+				print '<option value="' . $i . '" selected="selected">' . $j . '</option>';
 			} else {
       			print '<option value="' . $i . '">' . $j . '</option>';
 			}
@@ -269,7 +269,7 @@
    		}
     	print '</select>';
     	print ' Year:';
-    	print '<input type="text" name="' . $year . '" value="' . $currentYear . '" size="4"';
+    	print '<input type="text" name="' . $year . '" value="' . $currentYear . '" class="css3text" size="4"';
         if(isset($error)) {
 			print ' class="errorinput"';
         }
@@ -282,10 +282,10 @@
 		print '</li>';
     }
 
-	function createTime(&$error, $id, $label, $mandatory, $time1, $time2) {
+	function createTime(&$error, $label, $mandatory, $time1, $time2) {
 		$timeformat = '<option value="%1$02d">%1$02d</option>';
 
-		print '<li><label for="' . $id . '">' . $label . ':';
+		print '<li><label>' . $label . ':';
         if($mandatory) {
             print '*';
         }
@@ -316,7 +316,7 @@
 	  echo '<div id="content">
                 <h1>Create event</h1>
 				<div id="ccform">
-	        			<form method="post" action="create_event.php">
+	        			<form method="post" action="'. "{$_SERVER['PHP_SELF']}" . '">
 						<fieldset>
             			<legend>Fill in this form to create a new event</legend>
 							<ul>';
@@ -325,18 +325,18 @@
 		createCheckbox($targetError, 'target', 'target[]', 'Target audience', true, 'employees', 'shareholders', 'customers', 'Employees', 'Shareholders', 'Customers');
 		createTextarea($description, $descriptionError, 'description', 'Description', true, '35', '5', 'maximum', 'Maximum of 500 characters.');
 		createDate($startDateError, 'start_date', 'Start Date', true, 'start_month', 'start_day', 'start_year');
-		createTime($timeError, 'start_time', 'Start Time', true, 'time1', 'time2');
+		createTime($timeError, 'Start Time', true, 'time1', 'time2');
 		createDate($endDateError, 'end_date', 'End Date', true, 'end_month', 'end_day', 'end_year');
-		createTime($end_timeError, 'end_time', 'End Time', true, 'time3', 'time4');
+		createTime($end_timeError, 'End Time', true, 'time3', 'time4');
 		createField($place, $placeError, 'place', 'Place', true, 'maximum', 'Maximum of 100 characters.', '30');
 
 				           echo '<li>
 				                    <br />
 					                <label for="submit">&nbsp;</label>
-						            <input type="submit" id="submit" name="submit" value="Submit" />
+						            <input type="submit" id="ccformsubmit" name="submit" value="Submit" />
 					            </li>
-                            </ul>
-				            <p class="mandatory"><br />Fields marked with an asterisk (*) are mandatory.</p>
+                           </ul>
+				           <p class="mandatory"><br />Fields marked with an asterisk (*) are mandatory.</p>
                         </fieldset>
                     </form>
 		        </div>

@@ -1,10 +1,19 @@
-p.mandatory {
-    font-size: 80%;
-    padding-left: 10px;
-}
-
 p.maximum {
 	margin-left: 9em;
+}
+
+#accountsettingsform ul, #deleteaccountform ul, #accouninformation ul {
+    list-style: none;
+    padding: 3px 10px;
+}
+
+#accountsettingsform li, #deleteaccountform li, #accountinformation li {
+    padding: 3px 0px;
+}
+
+h1 {
+    font-size:110%;
+    margin-bottom:10px;
 }
 
 #accountsettingsform label {
@@ -19,8 +28,8 @@ p.maximum {
 
 #accountsettingsform fieldset {
     border: 1px solid;
-    width: 30em;
-    height: 33em;
+    width: 34em;
+    height: 12em;
 }
 
 .errorinput {

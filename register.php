@@ -130,24 +130,24 @@
       echo '<div id="content">
                 <h1>Create a new account</h1>
 				<div id="caform">
-	        			<form method="post" action="register.php">
+	        			<form method="post" action="'. "{$_SERVER['PHP_SELF']}" . '">
 						<fieldset>
             			<legend>Fill in this form to create a new account</legend>
 							<ul>';
 
-      createField($fname, $fnameError, 'fname', 'First Name', false);
-      createField($lname, $lnameError, 'lname', 'Last Name', true);
-      createField($username, $usernameError, 'username', 'Username', true);
-      createField($email, $emailError, 'email', 'Email address', true);
-      createField($pass1, $pass1Error, 'pass1', 'Password', true, 'password');
-      createField($pass2, $pass2Error, 'pass2', 'Retype Password', true, 'password');
+                                createField($fname, $fnameError, 'fname', 'First Name', false);
+                                createField($lname, $lnameError, 'lname', 'Last Name', true);
+                                createField($username, $usernameError, 'username', 'Username', true);
+                                createField($email, $emailError, 'email', 'Email address', true);
+                                createField($pass1, $pass1Error, 'pass1', 'Password', true, 'password');
+                                createField($pass2, $pass2Error, 'pass2', 'Retype Password', true, 'password');
 
                            echo '<li>
 				                    <br />
 					                <label for="submit">&nbsp;</label>
 						            <input type="submit" id="submit" name="submit" value="Submit" />
 					            </li>
-                            </ul>
+                           </ul>
 				            <p class="mandatory"><br />Fields marked with an asterisk (*) are mandatory.</p>
                         </fieldset>
                     </form>

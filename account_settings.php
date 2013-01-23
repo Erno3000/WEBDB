@@ -34,7 +34,7 @@ if (!isset($_SESSION['loggedin'])) {
             /* And output it in a form. */
             $n = $stmt->rowCount();
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
+            echo '<div id="accountinformation">';
             echo '<h1>Account information:</h1>';
             echo '<ul> <li>Username: ' . $row['username'] . '</li>';
             echo '<li>First name: ' . $row['first_name'] . '</li>';
@@ -61,11 +61,10 @@ if (!isset($_SESSION['loggedin'])) {
                 echo '<li>Rank: Admin</li>';
             }
 
-            echo '</ul> <br />';
-
-            echo '<h1>Edit Account Information</h1>';
-
-            echo '<form action="'. "{$_SERVER['PHP_SELF']}" . '" method="post" id="accountsettingsform"> <fieldset>
+            echo '</ul> <br /> </div>';
+            echo '<br /><h1>Edit Account Information</h1>';
+            echo '<div id="accountsettingsform">';
+            echo '<form action="'. "{$_SERVER['PHP_SELF']}" . '" method="post"> <fieldset>
             <legend>Edit only the fields which you would like to change</legend> <ul>
                 <li> <label for="currentpassword">Current password:</label>
                     <input type="password" class="css3text" name="currentpassword" id="currentpassword" /> <br /> </li>
@@ -75,8 +74,9 @@ if (!isset($_SESSION['loggedin'])) {
                     <input type="password" class="css3text" name="newpasswordretyped" id="newpasswordretyped" /> <br /> </li>
                 <li> <label for="newemail">Email:</label>
                     <input type="email" class="css3text" name="newemail" id="newemail" value=' . $row['email'] . '> <br /> </li>
-                <li> <input type="submit" value="Save changes" /> </li>
-            </ul> </fieldset> </form> <br />';
+                <li> <label for="submit">&nbsp;</label>
+                    <input type="submit" value="Save changes" /> </li>
+            </ul> </fieldset> </form> <br /> </div>';
 
             if ($_POST) {
                 $changed_something = false;
@@ -140,15 +140,21 @@ if (!isset($_SESSION['loggedin'])) {
             }
 
             echo '<br /> <br /> <h1>Delete my account</h1>';
+            echo '<div id="deleteaccountform">';
             echo '<p><strong>WARNING: This will completely delete your account from our server. This cannot be undone!</strong></p>';
-            echo '<form action="'. "{$_SERVER['PHP_SELF']}" . '" method="post" id="deleteaccountform"> <fieldset class="normal">';
+            echo '<form action="'. "{$_SERVER['PHP_SELF']}" . '" method="post"> <fieldset>';
             echo '
             <ul>
-                <li> <label for="deleteaccount"></label>
+                <li>
                     <input type="radio" name="choice" value="yes">Yes, I want to delete my account. <br />
-                    <input type="radio" name="choice" value="no">No, I don' . "'" . 't want to delete my account.<br /> </li>
-                <li> <input type="submit" value="Submit" /> </li>
-            </ul> </fieldset> </form>';
+                </li>
+                <li>
+                    <input type="radio" name="choice" value="no">No, I don' . "'" . 't want to delete my account.<br />
+                </li>
+                <li>
+                    <input type="submit" value="Submit" />
+                </li>
+            </ul> </fieldset> </form> </div>';
 
             if ($_POST && isset($_POST['choice'])) {
                 echo '<br />';
