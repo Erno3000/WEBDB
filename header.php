@@ -126,7 +126,7 @@
 		               	}
 		               	
 		               	if ($_SESSION['rank'] >= 2) {
-		                    echo '<li class="sep"><a href="approve_item.php">
+		                    echo '<li class="sep"><a href="approve_event.php">
 		                    	Approve event</a></li>';
 		                }
 		                
