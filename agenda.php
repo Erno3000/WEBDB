@@ -33,6 +33,9 @@ if (isset($_GET['calview'])) {
 
 if(isset($_GET['y']) && isset($_GET['m']) && isset($_GET['d'])) {
     $caldate = new Date($_GET['y'], $_GET['m'], $_GET['d']);
+    if(!$caldate->isValid()) {
+        $caldate = $today;
+    }
 }
 
 if($calview == YEAR) {
