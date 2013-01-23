@@ -83,9 +83,9 @@ if ($stmt = $mysqli->prepare($querySearch)) {
                     $monthName = date("F", mktime(0, 0, 0, intval(substr($startDate, 5, 7)), 1, 2000));
                     $day = intval(substr($startDate, 8, 9));
                     if(in_array($id, $following)) {
-                        $follow = '<div class="result_buttons"><a href="agenda.php?unfollow=' . $id . '" class="unfollow"><span>Unfollow event</span></a></div>';
+                        $follow = '<div class="result_buttons"><a href="' . createUnfollowUrl($id) . '" class="unfollow"><span>Unfollow event</span></a></div>';
                     } else if(isset($_SESSION['loggedin'])) {
-                        $follow = '<div class="result_buttons"><a href="agenda.php?follow=' . $id .'" class="follow"><span>Follow event</span></a></div>';
+                        $follow = '<div class="result_buttons"><a href="' . createFollowUrl($id) .'" class="follow"><span>Follow event</span></a></div>';
                     } else {
                         $follow = '';
                     }
@@ -126,8 +126,7 @@ function createSearchField()
     echo '" />';
 }
 
-function createTargetCheckbox($name, $bitmask)
-{
+function createTargetCheckbox($name, $bitmask) {
     echo '<input type="checkbox" id="' . $name . '" name="' . $name . '" class="css3check" value="' . $name . '"';
     global $defaultTarget;
     if ($defaultTarget & $bitmask) {
@@ -211,6 +210,30 @@ function getFollowingEvents() {
     return $results;
 }
 
+function createHiddenFields() {
+    createHiddenField('y');
+    createHiddenField('m');
+    createHiddenField('d');
+}
+
+function createHiddenField($name) {
+    if(isset($_GET[$name])) {
+        echo '<input type="hidden" name="' . $name . '" value="' . strip_tags($_GET[$name]) . '" />';
+    }
+}
+
+function createFollowUrl($id) {
+    $request = $_GET;
+    $request['follow'] = $id;
+    return urlFromArray('agenda.php', $request);
+}
+
+function createUnfollowUrl($id) {
+    $request = $_GET;
+    $request['unfollow'] = $id;
+    return urlFromArray('agenda.php', $request);
+}
+
 ?>
 
 <div id="calsearch">
@@ -227,6 +250,8 @@ function getFollowingEvents() {
         <select class="css3text" id="search_year" name="search_year">
             <?php echo $searchYears ?>
         </select>
+
+        <?php createHiddenFields(); ?>
 
         <input type="submit" class="css3button" id="search_button" value="Zoeken" />
 
