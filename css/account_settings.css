@@ -17,7 +17,8 @@ p.maximum {
     display: block;
 }
 
-fieldset {
+#accountsettingsform fieldset {
+    border: 1px solid;
     width: 30em;
     height: 33em;
 }

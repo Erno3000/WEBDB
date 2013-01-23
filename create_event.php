@@ -125,10 +125,6 @@
         }
 	}
 
-	if(!$db) {
-        trigger_error('Error when connecting: '.$db->errorInfo());
-    }
-
 	function error(&$errorVar, $msg) {
         global $formError;
         $formError = true;
