@@ -3,6 +3,7 @@
 /* TODO!
 - check of checkbox minimaal 1 vinkje heeft (werkt nog niet!)
 - bij alle pagina's veranderen dat form naar PHP_SELF stuurt ipv url!
+- description, date, time en checkbox waarden laten onthouden!
 */
 
 	$title = "Create event";
@@ -32,8 +33,8 @@
 
         //Query to create an event, data is filled by binding variables, i.e. filling in in the places where a ? states
 		$queryRegister = "INSERT INTO Events (user_id, subject, target_audience, description, start_date, end_date, start_time, end_time, place, approved)
-		      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)";
-        echo '0';
+		      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
         //Only send the form when every field is entered.
 		if(isset($_POST['subject'])	&& isset($_POST['target'])
             && isset($_POST['description']) && isset($_POST['start_month'])
@@ -43,9 +44,8 @@
             && isset($_POST['time2']) && isset($_POST['time3'])
             && isset($_POST['time4']) && isset($_POST['place'])) {
 
-            echo '1';
-
             //Set the posted data (linked to names from the form) into variables.
+            $rank = $_SESSION['rank'];
             $user_id = $_SESSION['id'];
             $subject = strip_tags($_POST['subject']);
             $targetArray = $_POST['target'];
@@ -66,8 +66,8 @@
 			$end_date = $end_year . '-' . $end_month . '-' . $end_day;
             $start_time = $time1 . ':' . $time2 . ':' . $seconds;
             $end_time = $time3 . ':' . $time4 . ':' . $seconds;
-
-            echo '2';
+            $approved = 1;
+            $waiting = 0;
 
             $target = 0;
             if(in_array('employees', $targetArray)) {
@@ -82,8 +82,6 @@
             if(!isset($_POST['target'])) {
                 error($targetError, "Check at least one box");
             }
-
-            echo '3';
 
             //Check the length and validity of the posted data
 			requireLength($subject, 1, 50, $subjectError);
@@ -107,27 +105,25 @@
                     $stmt->bindValue(7, $start_time, PDO::PARAM_STR);
                     $stmt->bindValue(8, $end_time, PDO::PARAM_STR);
                     $stmt->bindValue(9, $place, PDO::PARAM_STR);
-					echo '4';
+                    if($rank >= MODERATOR) {
+                        $stmt->bindValue(10, $approved, PDO::PARAM_INT);
+                    } else {
+                        $stmt->bindValue(10, $waiting, PDO::PARAM_INT);
+                    }
+
 					if(!$stmt->execute()) {
-	                    echo 'The form could not be submitted.'.$db->error;
+	                    echo 'The form could not be submitted.'.$db->errorInfo();
 	                } else {
 						echo 'Submitted.';
 	                }
-
-					$stmt->close();
-
 				} else {
-					echo 'There is an error in the query: '.$db->error;
+					echo 'There is an error in the query: '.$db->errorInfo();
 				}
 			}
 		} else {
-            echo '5';
+            //hier moet de foutafhandeling van checkbox komen! of zoiets
         }
 	}
-
-	if(!$db) {
-        trigger_error('Error when connecting: '.$db->error);
-    }
 
 	function error(&$errorVar, $msg) {
         global $formError;
@@ -320,7 +316,7 @@
 	  echo '<div id="content">
                 <h1>Create event</h1>
 				<div id="ccform">
-	        			<form method="post" action="create_item_test.php">
+	        			<form method="post" action="create_event.php">
 						<fieldset>
             			<legend>Fill in this form to create a new event</legend>
 							<ul>';
