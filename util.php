@@ -11,6 +11,11 @@
     $queryEventExists = "SELECT event_id FROM Events WHERE event_id=?";
 
 
+    function() {
+        echo 'stupid function created for git test';
+    }
+
+
     function urlFromArray($page, $array) {
         $page .= '?';
         $first = true;
