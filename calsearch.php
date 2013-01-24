@@ -36,10 +36,12 @@ if (isset($_GET['txt_search'])) {
 
 if(isset($_GET['follow']) && isset($_SESSION['loggedin'])) {
     followEvent($_SESSION['id'], intval($_GET['follow']));
+    unset($_GET['follow']);
 }
 
 if(isset($_GET['unfollow']) && isset($_SESSION['loggedin'])) {
     unfollowEvent($_SESSION['id'], intval($_GET['unfollow']));
+    unset($_GET['unfollow']);
 }
 
 if (isset($_GET['search_year'])) {

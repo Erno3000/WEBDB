@@ -8,7 +8,7 @@
 
     $queryFollow = "INSERT INTO Following (user_id, event_id) VALUES (?, ?)";
     $queryUnfollow = "DELETE FROM Following WHERE user_id=? AND event_id=?";
-    $queryEventExists = "SELECT event_id FROM Events WHERE event_id=?";
+    $queryEventExists = "SELECT event_id FROM Events WHERE event_id=? AND approved=1";
 
 
     function() {
@@ -44,7 +44,7 @@
 
             $stmt->close();
         } else {
-            echo 'Er zit een fout in de query: ' . $mysqli->error;
+            $success = false;
         }
 
         return $success;
@@ -63,7 +63,7 @@
 
             $stmt->close();
         } else {
-            echo 'Er zit een fout in de query: ' . $mysqli->error;
+            $success = false;
         }
 
         return $success;
@@ -84,7 +84,7 @@
 
             $stmt->close();
         } else {
-            echo 'Er zit een fout in de query: ' . $mysqli->error;
+            $success = false;
         }
 
         return $success;
